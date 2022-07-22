@@ -1,4 +1,6 @@
-function new_utils()
+-- utils
+
+u = (function()
     local utils = {
 
         buttons = {
@@ -13,7 +15,7 @@ function new_utils()
         },
 
         boolean_changing_every_nth_second = function(n)
-            return ceil(sin(time() * 0.5/n) / 2) == 1
+            return ceil(sin(time() * 0.5 / n) / 2) == 1
         end,
 
         colors = {
@@ -69,4 +71,4 @@ function new_utils()
     end
 
     return utils
-end
+end)()

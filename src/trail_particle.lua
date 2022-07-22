@@ -1,3 +1,5 @@
+-- trail_particle
+
 function new_trail_particle(params)
     local x = params.x
     local y = params.y

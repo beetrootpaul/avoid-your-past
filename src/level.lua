@@ -1,3 +1,5 @@
+-- level
+
 function new_level(params)
     local number_of_memory_triggers = params.number_of_memory_triggers
 
@@ -49,12 +51,11 @@ function new_level(params)
             for tile_y = 1, u.screen_edge_tiles do
                 local item = items[tile_x][tile_y]
                 if item then
-                    local is_colliding = item.is_colliding_with({
-                        collision_circle_x = collision_circle_x,
-                        collision_circle_y = collision_circle_y,
-                        collision_circle_r = collision_circle_r,
-                    })
-                    if is_colliding then
+                    local collided = collisions.have_circles_collided(
+                        { x = collision_circle_x, y = collision_circle_y, r = collision_circle_r },
+                        item
+                    )
+                    if collided then
                         on_memory_trigger()
                         items[tile_x][tile_y] = nil
                     end

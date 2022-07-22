@@ -1,3 +1,5 @@
+-- player
+
 function new_player()
     local p = {
         x = u.screen_edge_length / 2,

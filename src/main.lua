@@ -1,4 +1,4 @@
-u = new_utils()
+-- main
 
 local game_state = "start"
 
@@ -75,6 +75,9 @@ function _update()
             }))
         end
         memory.follow_origin()
+        if memory.is_active and collisions.have_circles_collided(memory, player) then
+            extcmd("reset")
+        end
     end)
     for i = 1, #trail_particles do
         if trail_particles[i] then
@@ -117,3 +120,5 @@ end
 -- TODO: keys to collect to open level's exit
 -- TODO: better README: screenshots, explanation, keys
 -- TODO: entry screen with a game title and author (Twitter handle, www)
+-- TODO: show 1 new memory trigger (coin?) on every item collect, instead of having a static amount of them from the very beginning
+-- TODO: show score, increase it on every coin collect
