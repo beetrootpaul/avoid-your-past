@@ -1,7 +1,7 @@
-function new_player(params)
+function new_player()
     local p = {
-        x = params.x,
-        y = params.y,
+        x = u.screen_edge_length / 2,
+        y = u.screen_edge_length / 2,
         r = 4,
     }
 

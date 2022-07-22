@@ -41,7 +41,11 @@ function new_utils()
 
         screen_edge_length = 128,
 
+        screen_edge_tiles = 16,
+
         text_height_px = 5,
+
+        tile_length = 8,
 
         trim = function(text)
             local result = text

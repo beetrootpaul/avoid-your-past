@@ -2,14 +2,12 @@ u = new_utils()
 
 local game_state = "start"
 
-local level = new_level({
-    number_of_memory_triggers = 4
+local player = new_player({
+    memory = nil,
 })
 
-local player = new_player({
-    x = u.screen_edge_length / 2,
-    y = u.screen_edge_length / 2,
-    memory = nil,
+local level = new_level({
+    number_of_memory_triggers = 10
 })
 
 local memory_chain = new_memory_chain()
