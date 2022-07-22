@@ -6,9 +6,11 @@ __lua__
 
 #include src/utils.lua
 
-#include src/player.lua
+#include src/item.lua
+#include src/level.lua
 #include src/memory.lua
 #include src/memory_chain.lua
+#include src/player.lua
 #include src/trail_particle.lua
 
 #include src/main.lua

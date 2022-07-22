@@ -5,7 +5,7 @@ function new_player(params)
         r = 4,
     }
 
-    local default_speed = 2
+    local default_speed = 4
     local dx = default_speed
     local dy = 0
 
