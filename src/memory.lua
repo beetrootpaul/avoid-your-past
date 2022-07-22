@@ -29,7 +29,7 @@ function new_memory(params)
     end
 
     m.draw = function()
-        circfill(m.x, m.y, m.r, u.colors.orange)
+        circfill(m.x, m.y, m.r, u.colors.pink)
     end
 
     return m;
