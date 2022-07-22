@@ -1,4 +1,6 @@
-function new_utils()
+-- utils
+
+u = (function()
     local utils = {
 
         buttons = {
@@ -11,6 +13,10 @@ function new_utils()
             o = 4,
             x = 5,
         },
+
+        boolean_changing_every_nth_second = function(n)
+            return ceil(sin(time() * 0.5 / n) / 2) == 1
+        end,
 
         colors = {
             black = 0,
@@ -41,7 +47,11 @@ function new_utils()
 
         screen_edge_length = 128,
 
+        screen_edge_tiles = 16,
+
         text_height_px = 5,
+
+        tile_length = 8,
 
         trim = function(text)
             local result = text
@@ -61,4 +71,4 @@ function new_utils()
     end
 
     return utils
-end
+end)()
