@@ -6,6 +6,8 @@ __lua__
 
 #include src/utils.lua
 
+#include src/player.lua
+
 #include src/main.lua
 
 --[[
