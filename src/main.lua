@@ -86,4 +86,5 @@ end
 -- TODO: start game state
 -- TODO: color changer, memories not harmful nor visible in same color
 -- TODO: keys to collect to open level's exit
-
+-- TODO: better README: screenshots, explanation, keys
+-- TODO: entry screen with a game title and author (Twitter handle, www)
