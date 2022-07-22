@@ -1,12 +1,14 @@
 u = new_utils()
 
+local game_state = "start"
+
 local level = new_level({
     number_of_memory_triggers = 4
 })
 
 local player = new_player({
-    x = u.screen_edge_length * 1 / 4,
-    y = u.screen_edge_length * 3 / 4,
+    x = u.screen_edge_length / 2,
+    y = u.screen_edge_length / 2,
     memory = nil,
 })
 
@@ -20,10 +22,26 @@ function add_memory()
 end
 
 function _init()
-    add_memory()
 end
 
 function _update()
+    if game_state == "start" then
+        if btnp(u.buttons.l) then
+            player.direct_left()
+            game_state = "gameplay"
+        elseif btnp(u.buttons.r) then
+            player.direct_right()
+            game_state = "gameplay"
+        elseif btnp(u.buttons.u) then
+            player.direct_up()
+            game_state = "gameplay"
+        elseif btnp(u.buttons.d) then
+            player.direct_down()
+            game_state = "gameplay"
+        end
+        return
+    end
+
     if btnp(u.buttons.l) then
         player.direct_left()
     end
@@ -78,12 +96,21 @@ function _draw()
     memory_chain.for_each_memory_in_order(player, function(memory)
         memory.draw()
     end)
+
+    if game_state == "start" then
+        local margin = 3
+        local time_dependent_boolean = ceil(sin(time() * 1.5) / 2) == 1
+        local glyph_color = time_dependent_boolean and u.colors.light_grey or u.colors.violet_grey
+        u.print_with_outline("⬅️", player.x - player.r - margin - 8, player.y - 2, glyph_color, u.colors.purple)
+        u.print_with_outline("➡️", player.x + player.r + margin + 2 , player.y - 2, glyph_color, u.colors.purple)
+        u.print_with_outline("⬆️", player.x - 3, player.y - player.r - margin - 6, glyph_color, u.colors.purple)
+        u.print_with_outline("⬇️", player.x - 3, player.y + player.r + margin + 2, glyph_color, u.colors.purple)
+    end
 end
 
 -- TODO: extract some noise out of main.lua
 -- TODO: SFXs
 -- TODO: VFXs
--- TODO: start game state
 -- TODO: color changer, memories not harmful nor visible in same color
 -- TODO: keys to collect to open level's exit
 -- TODO: better README: screenshots, explanation, keys
