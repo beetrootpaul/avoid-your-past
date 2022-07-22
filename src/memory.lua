@@ -7,7 +7,7 @@ function new_memory(params)
         r = origin.r,
     }
 
-    local delay = 60
+    local delay = 30
     local origin_state_buffer = {}
     local origin_state_buffer_index = 0
 

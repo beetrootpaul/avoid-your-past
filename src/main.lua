@@ -7,7 +7,7 @@ local player = new_player({
 })
 
 local level = new_level({
-    number_of_memory_triggers = 10
+    number_of_memory_triggers = 5
 })
 
 local memory_chain = new_memory_chain()
@@ -58,18 +58,22 @@ function _update()
         collision_circle_r = player.r,
         on_memory_trigger = add_memory
     })
-    add(trail_particles, new_trail_particle({
-        x = player.x,
-        y = player.y,
-        color = u.colors.brown
-    }))
+    if u.boolean_changing_every_nth_second(1/20) then
+        add(trail_particles, new_trail_particle({
+            x = player.x,
+            y = player.y,
+            color = u.colors.brown
+        }))
+    end
     player.move()
     memory_chain.for_each_memory_in_order(player, function(memory)
-        add(trail_particles, new_trail_particle({
-            x = memory.x,
-            y = memory.y,
-            color = u.colors.purple
-        }))
+        if u.boolean_changing_every_nth_second(1/20) then
+            add(trail_particles, new_trail_particle({
+                x = memory.x,
+                y = memory.y,
+                color = u.colors.purple
+            }))
+        end
         memory.follow_origin()
     end)
     for i = 1, #trail_particles do
@@ -97,10 +101,10 @@ function _draw()
 
     if game_state == "start" then
         local margin = 3
-        local time_dependent_boolean = ceil(sin(time() * 1.5) / 2) == 1
+        local time_dependent_boolean = u.boolean_changing_every_nth_second(0.5)
         local glyph_color = time_dependent_boolean and u.colors.light_grey or u.colors.violet_grey
         u.print_with_outline("⬅️", player.x - player.r - margin - 8, player.y - 2, glyph_color, u.colors.purple)
-        u.print_with_outline("➡️", player.x + player.r + margin + 2 , player.y - 2, glyph_color, u.colors.purple)
+        u.print_with_outline("➡️", player.x + player.r + margin + 2, player.y - 2, glyph_color, u.colors.purple)
         u.print_with_outline("⬆️", player.x - 3, player.y - player.r - margin - 6, glyph_color, u.colors.purple)
         u.print_with_outline("⬇️", player.x - 3, player.y + player.r + margin + 2, glyph_color, u.colors.purple)
     end

@@ -12,6 +12,10 @@ function new_utils()
             x = 5,
         },
 
+        boolean_changing_every_nth_second = function(n)
+            return ceil(sin(time() * 0.5/n) / 2) == 1
+        end,
+
         colors = {
             black = 0,
             dark_blue = 1,

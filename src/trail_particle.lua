@@ -4,6 +4,7 @@ function new_trail_particle(params)
     local color = params.color
 
     local max_ttl = 30
+    local max_r = 4
 
     local to = {
         ttl = max_ttl
@@ -16,7 +17,7 @@ function new_trail_particle(params)
     end
 
     to.draw = function()
-        local r = (to.ttl / max_ttl) * 3
+        local r = (to.ttl / max_ttl) * max_r
         circfill(x, y, r, color)
     end
 
