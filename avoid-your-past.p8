@@ -8,6 +8,7 @@ __lua__
 #include src/collisions.lua
 
 #include src/game_states/game_state_gameplay.lua
+#include src/game_states/game_state_over.lua
 #include src/game_states/game_state_start.lua
 
 #include src/animated_sprite.lua

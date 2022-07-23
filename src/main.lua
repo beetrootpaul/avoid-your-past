@@ -22,7 +22,6 @@ end
 -- TODO: entry screen with a game title and author (Twitter handle, www)
 -- TODO: polish arrows on start
 -- TODO: fix memory first moments
--- TODO: bring back game restart on over
 
 -- TODO: extract particles to a separate file
 -- TODO: rename memory triggers to coins

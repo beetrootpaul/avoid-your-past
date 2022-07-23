@@ -1,7 +1,6 @@
 -- game_state_start
 
 function new_game_state_start()
-    local topbar = new_topbar()
     local player = new_player({
         memory = nil,
     })
@@ -31,7 +30,6 @@ function new_game_state_start()
 
         if has_started then
             return new_game_state_gameplay({
-                topbar = topbar,
                 player = player,
                 level = level,
             })
@@ -41,17 +39,10 @@ function new_game_state_start()
 
     gs.draw = function()
         level.draw_bg()
-
         level.draw_items({
             can_collect_coins = true,
         })
-
         player.draw()
-
-        topbar.draw({
-            score = 0,
-            special_phase = nil,
-        })
 
         local margin = 3
         local time_dependent_boolean = u.boolean_changing_every_nth_second(0.5)

@@ -1,7 +1,7 @@
 -- game_state_gameplay
 
 function new_game_state_gameplay(params)
-    local topbar = params.topbar
+    local topbar = new_topbar()
     local player = params.player
     local level = params.level
 
@@ -146,7 +146,10 @@ function new_game_state_gameplay(params)
         end
 
         if has_collided_with_memory then
-            return gs
+            return new_game_state_over({
+                player = player,
+                level = level,
+            })
         end
         return gs
     end
