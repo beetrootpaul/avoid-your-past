@@ -11,6 +11,7 @@ function new_level(params)
     local bg_color_invulnerability = u.colors.pink
     local bg_color_coin_hidden = u.colors.orange
     local bg_color = bg_color_normal
+    local bg_pattern = nil
 
     local get_tiles_close_to_player = function()
         local left_tile_x = flr((player.x - player.r) / u.tile_length) + 1
@@ -117,7 +118,6 @@ function new_level(params)
                 player.collision_circle(),
                 invulnerability_trigger.collision_circle()
             ) then
-                bg_color = bg_color_invulnerability
                 p.on_invulnerability_trigger()
                 invulnerability_trigger = nil
             end
@@ -127,7 +127,6 @@ function new_level(params)
                 player.collision_circle(),
                 coin_hide_trigger.collision_circle()
             ) then
-                bg_color = bg_color_coin_hidden
                 p.on_coin_hide_trigger()
                 coin_hide_trigger = nil
             end
@@ -138,8 +137,22 @@ function new_level(params)
         bg_color = bg_color_normal
     end
 
+    l.set_bg_color = function(color)
+        bg_color = color
+    end
+
+    l.set_bg_pattern = function(bg_pattern_or_nil)
+        bg_pattern = bg_pattern_or_nil
+    end
+
     l.draw = function(params)
-        rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color)
+        if bg_pattern then
+            fillp(bg_pattern)
+        end
+        rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color + 16 * bg_color_normal)
+        if bg_pattern then
+            fillp()
+        end
 
         local tiles_close_to_player = get_tiles_close_to_player()
         if __debug__ then

@@ -44,7 +44,7 @@ function hide_coins()
     can_collect_coins = false
     special_phase = {
         label = "cannot collect",
-        color = u.colors.yellow,
+        color = u.colors.orange,
         ttl_max = 90,
         ttl = 90,
     }
@@ -72,14 +72,33 @@ function _update()
     end
 
     if special_phase then
+        level.set_bg_color(special_phase.color)
+        local transition_speed = 1
+        local ttl_distance_from_start_end = min(special_phase.ttl, special_phase.ttl_max - special_phase.ttl)
+        if ttl_distance_from_start_end < transition_speed then
+            level.set_bg_pattern(1 + 2 + 4 + 8 + 16 + 32 + 128 + 256 + 512 + 1024 + 2048 + 4096 + 8192 + 16384 + 32768)
+        elseif ttl_distance_from_start_end < 2 * transition_speed then
+            level.set_bg_pattern(1 + 2 + 4 + 8 + 32 + 128 + 256 + 512 + 1024 + 2048 + 8192 + 32768)
+        elseif ttl_distance_from_start_end < 3 * transition_speed then
+            level.set_bg_pattern(1 + 4 + 32 + 128 + 256 + 1024 + 8192 + 32768)
+        elseif ttl_distance_from_start_end < 4 * transition_speed then
+            level.set_bg_pattern(1 + 4 + 256 + 1024)
+        elseif ttl_distance_from_start_end < 5 * transition_speed then
+            level.set_bg_pattern(1)
+        else
+            level.set_bg_pattern(nil)
+        end
         if special_phase.ttl <= 0 then
             special_phase = nil
             invulnerable = false
             can_collect_coins = true
             level.reset_bg()
+            level.set_bg_pattern(nil)
         else
             special_phase.ttl = special_phase.ttl - 1
         end
+    else
+        level.reset_bg()
     end
 
     if btnp(u.buttons.l) then
