@@ -21,7 +21,7 @@ function new_trail_particle(params)
 
     to.draw = function()
         local r = flr((to.ttl / max_ttl) * (max_r + 0.9))
-        circfill(x, y, r, color)
+        circfill(x, u.topbar_h_px + y, r, color)
     end
 
     return to;

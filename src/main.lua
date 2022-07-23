@@ -12,6 +12,8 @@ local level = new_level({
     player = player,
 })
 
+local tb = new_topbar()
+
 local score = 0
 
 local memory_chain = new_memory_chain()
@@ -46,7 +48,7 @@ end
 function hide_coins()
     can_collect_coins = false
     special_phase = {
-        label = "cannot collect",
+        label = "cannot collect coins",
         color = u.colors.orange,
         ttl_max = 90,
         ttl = 90,
@@ -190,57 +192,32 @@ function _draw()
         end)
     end
 
-    if special_phase then
-        print(special_phase.label, 1, 1, u.colors.red)
-        local progress_x = 1
-        local progress_y = u.text_height_px + 2
-        local progress_w = 60
-        local progress_h = 10
-        local border = 1
-        rect(
-            progress_x,
-            progress_y,
-            progress_x + progress_w - 1,
-            progress_y + progress_h - 1,
-            u.colors.white
-        )
-        rectfill(
-            progress_x + border,
-            progress_y + border,
-            progress_x + border + progress_w - 2 * border - 1,
-            progress_y + border + progress_h - 2 * border - 1,
-            u.colors.black
-        )
-        rectfill(
-            progress_x + border,
-            progress_y + border,
-            progress_x + border + (special_phase.ttl / special_phase.ttl_max) * (progress_w - 2 * border - 1),
-            progress_y + border + progress_h - 2 * border - 1,
-            special_phase.color
-        )
-    end
-
-    print("score: " .. tostr(score), 1, 40, u.colors.dark_green)
+    tb.draw({
+        score = score,
+        special_phase = special_phase,
+    })
 
     if game_state == "start" then
         local margin = 3
         local time_dependent_boolean = u.boolean_changing_every_nth_second(0.5)
         local glyph_color = time_dependent_boolean and u.colors.light_grey or u.colors.violet_grey
-        u.print_with_outline("⬅️", player.x - player.r - margin - 8, player.y - 2, glyph_color, u.colors.purple)
-        u.print_with_outline("➡️", player.x + player.r + margin + 2, player.y - 2, glyph_color, u.colors.purple)
-        u.print_with_outline("⬆️", player.x - 3, player.y - player.r - margin - 6, glyph_color, u.colors.purple)
-        u.print_with_outline("⬇️", player.x - 3, player.y + player.r + margin + 2, glyph_color, u.colors.purple)
+        u.print_with_outline("⬅️", player.x - player.r - margin - 8, u.topbar_h_px + player.y - 2, glyph_color, u.colors.purple)
+        u.print_with_outline("➡️", player.x + player.r + margin + 2, u.topbar_h_px + player.y - 2, glyph_color, u.colors.purple)
+        u.print_with_outline("⬆️", player.x - 3, u.topbar_h_px + player.y - player.r - margin - 6, glyph_color, u.colors.purple)
+        u.print_with_outline("⬇️", player.x - 3, u.topbar_h_px + player.y + player.r + margin + 2, glyph_color, u.colors.purple)
     end
 end
 
--- TODO: extract some noise out of main.lua
 -- TODO: SFXs
 -- TODO: VFXs
--- TODO: better README: screenshots, explanation, keys
 -- TODO: entry screen with a game title and author (Twitter handle, www)
+-- TODO: polish arrows on start
+-- TODO: fix memory first moments
+
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
+-- TODO: clean up, refactor, access through methods only
+
+-- TODO: better README: screenshots, explanation, keys
 -- TODO: add itch URL to GitHub repo details
 -- TODO: generate cart label image
--- TODO: clean up, refactor, access through methods only
--- TODO: polish arrows on start

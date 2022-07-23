@@ -34,7 +34,7 @@ function new_level(params)
         local available_tiles = {}
         local margin_tiles = 1
         for tile_x = 1 + margin_tiles, u.screen_edge_tiles - margin_tiles do
-            for tile_y = 1 + margin_tiles, u.screen_edge_tiles - margin_tiles do
+            for tile_y = 1 + margin_tiles, u.screen_edge_tiles - u.topbar_h_tiles - margin_tiles do
                 if not tiles_close_to_player[tile_x .. "_" .. tile_y] then
                     add(available_tiles, { tile_x = tile_x, tile_y = tile_y })
                 end
@@ -60,6 +60,9 @@ function new_level(params)
             local next_chosen_tile = rnd(available_tiles)
             if next_chosen_tile then
                 local probability = rnd(1)
+                if __debug__ then
+                    printh(probability)
+                end
                 if probability < 0.3 then
                     invulnerability_trigger = new_item({
                         tile_x = next_chosen_tile.tile_x,
@@ -149,24 +152,28 @@ function new_level(params)
         if bg_pattern then
             fillp(bg_pattern)
         end
-        rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color + 16 * bg_color_normal)
+        rectfill(
+            0, u.topbar_h_px,
+            u.screen_edge_px - 1, u.screen_edge_px - 1,
+            bg_color + 16 * bg_color_normal
+        )
         if bg_pattern then
             fillp()
         end
 
-        local tiles_close_to_player = get_tiles_close_to_player()
         if __debug__ then
+            local tiles_close_to_player = get_tiles_close_to_player()
             for tile_x = 1, u.screen_edge_tiles do
-                for tile_y = 1, u.screen_edge_tiles do
+                for tile_y = 1, u.screen_edge_tiles - u.topbar_h_tiles do
                     line(
-                        (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
-                        (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
+                        (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
+                        (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
                         u.colors.violet_grey
                     )
                     if tiles_close_to_player[tile_x .. "_" .. tile_y] then
                         rectfill(
-                            (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
-                            tile_x * u.tile_length - 1, tile_y * u.tile_length - 1,
+                            (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
+                            tile_x * u.tile_length - 1, u.topbar_h_px + tile_y * u.tile_length - 1,
                             u.colors.purple
                         )
                     end

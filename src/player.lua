@@ -2,8 +2,8 @@
 
 function new_player()
     local p = {
-        x = u.screen_edge_length / 2,
-        y = u.screen_edge_length / 2,
+        x = u.screen_edge_px / 2,
+        y = (u.screen_edge_px - u.topbar_h_px) / 2,
         r = 3,
     }
 
@@ -46,8 +46,8 @@ function new_player()
     p.move = function()
         p.x = p.x + dx
         p.y = p.y + dy
-        p.x = mid(p.r, p.x, u.screen_edge_length - p.r - 1)
-        p.y = mid(p.r, p.y, u.screen_edge_length - p.r - 1)
+        p.x = mid(p.r, p.x, u.screen_edge_px - p.r - 1)
+        p.y = mid(p.r, p.y, u.screen_edge_px - u.topbar_h_px - p.r - 1)
     end
 
     p.draw = function()
@@ -56,11 +56,11 @@ function new_player()
         spr(
             sprite_for_direction[p.direction],
             p.x - p.r,
-            p.y - p.r
+            u.topbar_h_px + p.y - p.r
         )
         palt()
         if __debug__ then
-            circfill(p.x, p.y, p.r, u.colors.red)
+            circfill(p.x, u.topbar_h_px + p.y, p.r, u.colors.red)
         end
     end
 

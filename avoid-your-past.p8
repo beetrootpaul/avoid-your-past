@@ -13,6 +13,7 @@ __lua__
 #include src/memory.lua
 #include src/memory_chain.lua
 #include src/player.lua
+#include src/topbar.lua
 #include src/trail_particle.lua
 
 #include src/main.lua
