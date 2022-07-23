@@ -4,8 +4,11 @@ function new_level(params)
     local player = params.player
     local memory_trigger = nil
     local invulnerability_trigger = nil
+    local coin_hide_trigger = nil
+
     local bg_color_normal = u.colors.dark_grey
     local bg_color_invulnerability = u.colors.pink
+    local bg_color_coin_hidden = u.colors.orange
     local bg_color = bg_color_normal
 
     local get_tiles_close_to_player = function()
@@ -45,15 +48,25 @@ function new_level(params)
             })
         end
 
-        if not invulnerability_trigger and not (bg_color == bg_color_invulnerability) then
+        if not invulnerability_trigger and not coin_hide_trigger and not (bg_color == bg_color_invulnerability) and not (bg_color == bg_color_coin_hidden) then
             del(available_tiles, chosen_tile)
             local next_chosen_tile = rnd(available_tiles)
             if next_chosen_tile then
-                invulnerability_trigger = new_item({
-                    x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
-                    y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
-                    color = u.colors.pink,
-                })
+                local probability = rnd(1)
+                if probability < 0.3 then
+                    invulnerability_trigger = new_item({
+                        x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
+                        y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
+                        color = u.colors.pink,
+                    })
+                end
+                if probability > 0.7 then
+                    coin_hide_trigger = new_item({
+                        x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
+                        y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
+                        color = u.colors.lime,
+                    })
+                end
             end
         end
     end
@@ -61,7 +74,7 @@ function new_level(params)
     local l = {}
 
     l.handle_collisions = function(p)
-        if memory_trigger then
+        if p.can_collect_coins and memory_trigger then
             if collisions.have_circles_collided(player, memory_trigger) then
                 memory_trigger = nil
                 bg_color = bg_color_normal
@@ -76,9 +89,16 @@ function new_level(params)
                 invulnerability_trigger = nil
             end
         end
+        if coin_hide_trigger then
+            if collisions.have_circles_collided(player, coin_hide_trigger) then
+                bg_color = bg_color_coin_hidden
+                p.on_coin_hide_trigger()
+                coin_hide_trigger = nil
+            end
+        end
     end
 
-    l.draw = function()
+    l.draw = function(params)
         rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color)
 
         local tiles_close_to_player = get_tiles_close_to_player()
@@ -101,11 +121,14 @@ function new_level(params)
             end
         end
 
-        if memory_trigger then
+        if memory_trigger and params.can_collect_coins then
             memory_trigger.draw()
         end
         if invulnerability_trigger then
             invulnerability_trigger.draw()
+        end
+        if coin_hide_trigger then
+            coin_hide_trigger.draw()
         end
     end
 

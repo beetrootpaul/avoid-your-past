@@ -17,15 +17,21 @@ local memory_chain = new_memory_chain()
 local trail_particles = {}
 
 local invulnerable = false
+local can_collect_coins = true
 
 function add_memory()
     invulnerable = false
+    can_collect_coins = true
     local last_memory = memory_chain.last_memory_or_player(player)
     last_memory.memory = new_memory({ origin = last_memory })
 end
 
 function hide_memories()
     invulnerable = true
+end
+
+function hide_coins()
+    can_collect_coins = false
 end
 
 function _init()
@@ -63,8 +69,10 @@ function _update()
     end
 
     level.handle_collisions({
+        can_collect_coins = can_collect_coins,
         on_memory_trigger = add_memory,
         on_invulnerability_trigger = hide_memories,
+        on_coin_hide_trigger = hide_coins,
     })
 
     if u.boolean_changing_every_nth_second(1 / 20) then
@@ -110,7 +118,9 @@ end
 function _draw()
     cls()
 
-    level.draw()
+    level.draw({
+        can_collect_coins = can_collect_coins,
+    })
     for i = 1, #trail_particles do
         if not trail_particles[i].is_of_memory or not invulnerable then
             trail_particles[i].draw()
