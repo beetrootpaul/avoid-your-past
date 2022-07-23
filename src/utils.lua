@@ -45,9 +45,13 @@ u = (function()
             print(text, x, y, text_color)
         end,
 
-        screen_edge_length = 128,
+        screen_edge_px = 128,
 
         screen_edge_tiles = 16,
+
+        topbar_h_px = 16,
+
+        topbar_h_tiles = 1,
 
         text_height_px = 5,
 

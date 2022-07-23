@@ -7,10 +7,11 @@ function new_level(params)
     local invulnerability_trigger
     local coin_hide_trigger
 
-    local bg_color_normal = u.colors.dark_grey
+    local bg_color_normal = u.colors.dark_blue
     local bg_color_invulnerability = u.colors.pink
     local bg_color_coin_hidden = u.colors.orange
     local bg_color = bg_color_normal
+    local bg_pattern = nil
 
     local get_tiles_close_to_player = function()
         local left_tile_x = flr((player.x - player.r) / u.tile_length) + 1
@@ -33,7 +34,7 @@ function new_level(params)
         local available_tiles = {}
         local margin_tiles = 1
         for tile_x = 1 + margin_tiles, u.screen_edge_tiles - margin_tiles do
-            for tile_y = 1 + margin_tiles, u.screen_edge_tiles - margin_tiles do
+            for tile_y = 1 + margin_tiles, u.screen_edge_tiles - u.topbar_h_tiles - margin_tiles do
                 if not tiles_close_to_player[tile_x .. "_" .. tile_y] then
                     add(available_tiles, { tile_x = tile_x, tile_y = tile_y })
                 end
@@ -43,9 +44,14 @@ function new_level(params)
         local chosen_tile = rnd(available_tiles)
         if chosen_tile then
             memory_trigger = new_item({
-                x = (chosen_tile.tile_x - 0.5) * u.tile_length,
-                y = (chosen_tile.tile_y - 0.5) * u.tile_length,
-                color = u.colors.orange,
+                tile_x = chosen_tile.tile_x,
+                tile_y = chosen_tile.tile_y,
+                collision_circle_r = 2.5,
+                animated_sprite = new_animated_sprite({
+                    first_sprite = 16,
+                    number_of_sprites = 16,
+                    frames_per_sprite = 2,
+                })
             })
         end
 
@@ -54,18 +60,31 @@ function new_level(params)
             local next_chosen_tile = rnd(available_tiles)
             if next_chosen_tile then
                 local probability = rnd(1)
+                if __debug__ then
+                    printh(probability)
+                end
                 if probability < 0.3 then
                     invulnerability_trigger = new_item({
-                        x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
-                        y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
-                        color = u.colors.pink,
+                        tile_x = next_chosen_tile.tile_x,
+                        tile_y = next_chosen_tile.tile_y,
+                        collision_circle_r = 3.5,
+                        animated_sprite = new_animated_sprite({
+                            first_sprite = 48,
+                            number_of_sprites = 1,
+                            frames_per_sprite = 1,
+                        })
                     })
                 end
                 if probability > 0.7 then
                     coin_hide_trigger = new_item({
-                        x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
-                        y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
-                        color = u.colors.lime,
+                        tile_x = next_chosen_tile.tile_x,
+                        tile_y = next_chosen_tile.tile_y,
+                        collision_circle_r = 3.5,
+                        animated_sprite = new_animated_sprite({
+                            first_sprite = 32,
+                            number_of_sprites = 1,
+                            frames_per_sprite = 1,
+                        })
                     })
                 end
             end
@@ -74,24 +93,43 @@ function new_level(params)
 
     local l = {}
 
+    l.animate = function()
+        if memory_trigger then
+            memory_trigger.animate()
+        end
+        if invulnerability_trigger then
+            invulnerability_trigger.animate()
+        end
+        if coin_hide_trigger then
+            coin_hide_trigger.animate()
+        end
+    end
+
     l.handle_collisions = function(p)
         if p.can_collect_coins and memory_trigger then
-            if collisions.have_circles_collided(player, memory_trigger) then
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                memory_trigger.collision_circle()
+            ) then
                 memory_trigger = nil
                 p.on_memory_trigger()
                 spawn_memory_trigger()
             end
         end
         if invulnerability_trigger then
-            if collisions.have_circles_collided(player, invulnerability_trigger) then
-                bg_color = bg_color_invulnerability
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                invulnerability_trigger.collision_circle()
+            ) then
                 p.on_invulnerability_trigger()
                 invulnerability_trigger = nil
             end
         end
         if coin_hide_trigger then
-            if collisions.have_circles_collided(player, coin_hide_trigger) then
-                bg_color = bg_color_coin_hidden
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                coin_hide_trigger.collision_circle()
+            ) then
                 p.on_coin_hide_trigger()
                 coin_hide_trigger = nil
             end
@@ -102,22 +140,40 @@ function new_level(params)
         bg_color = bg_color_normal
     end
 
-    l.draw = function(params)
-        rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color)
+    l.set_bg_color = function(color)
+        bg_color = color
+    end
 
-        local tiles_close_to_player = get_tiles_close_to_player()
+    l.set_bg_pattern = function(bg_pattern_or_nil)
+        bg_pattern = bg_pattern_or_nil
+    end
+
+    l.draw = function(params)
+        if bg_pattern then
+            fillp(bg_pattern)
+        end
+        rectfill(
+            0, u.topbar_h_px,
+            u.screen_edge_px - 1, u.screen_edge_px - 1,
+            bg_color + 16 * bg_color_normal
+        )
+        if bg_pattern then
+            fillp()
+        end
+
         if __debug__ then
+            local tiles_close_to_player = get_tiles_close_to_player()
             for tile_x = 1, u.screen_edge_tiles do
-                for tile_y = 1, u.screen_edge_tiles do
+                for tile_y = 1, u.screen_edge_tiles - u.topbar_h_tiles do
                     line(
-                        (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
-                        (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
+                        (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
+                        (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
                         u.colors.violet_grey
                     )
                     if tiles_close_to_player[tile_x .. "_" .. tile_y] then
                         rectfill(
-                            (tile_x - 1) * u.tile_length, (tile_y - 1) * u.tile_length,
-                            tile_x * u.tile_length - 1, tile_y * u.tile_length - 1,
+                            (tile_x - 1) * u.tile_length, u.topbar_h_px + (tile_y - 1) * u.tile_length,
+                            tile_x * u.tile_length - 1, u.topbar_h_px + tile_y * u.tile_length - 1,
                             u.colors.purple
                         )
                     end
