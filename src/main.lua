@@ -27,7 +27,8 @@ local special_phase
 local particle_counter_max = 4
 local particle_counter = particle_counter_max
 
-function add_memory()
+function on_coin_taken()
+    sfx(0)
     score = score + 10
     if not invulnerable then
         local last_memory = memory_chain.last_memory_or_player(player)
@@ -36,6 +37,7 @@ function add_memory()
 end
 
 function hide_memories()
+    sfx(2)
     invulnerable = true
     special_phase = {
         label = "invulnerability",
@@ -46,6 +48,7 @@ function hide_memories()
 end
 
 function hide_coins()
+    sfx(1)
     can_collect_coins = false
     special_phase = {
         label = "cannot collect coins",
@@ -73,6 +76,9 @@ function _update()
             player.direct_down()
             game_state = "gameplay"
         end
+        return
+    end
+    if game_state == "over" then
         return
     end
 
@@ -121,7 +127,7 @@ function _update()
 
     level.handle_collisions({
         can_collect_coins = can_collect_coins,
-        on_memory_trigger = add_memory,
+        on_memory_trigger = on_coin_taken,
         on_invulnerability_trigger = hide_memories,
         on_coin_hide_trigger = hide_coins,
     })
@@ -153,7 +159,8 @@ function _update()
                 memory.collision_circle(),
                 player.collision_circle()
             ) then
-                extcmd("reset")
+                sfx(3)
+                game_state = "over"
             end
         end
     end)
@@ -175,14 +182,17 @@ end
 function _draw()
     cls()
 
-    level.draw({
-        can_collect_coins = can_collect_coins,
-    })
+    level.draw_bg()
+
     for i = 1, #trail_particles do
         if not trail_particles[i].is_of_memory or not invulnerable then
             trail_particles[i].draw()
         end
     end
+
+    level.draw_items({
+        can_collect_coins = can_collect_coins,
+    })
 
     player.draw()
 
@@ -208,11 +218,11 @@ function _draw()
     end
 end
 
--- TODO: SFXs
 -- TODO: VFXs
 -- TODO: entry screen with a game title and author (Twitter handle, www)
 -- TODO: polish arrows on start
 -- TODO: fix memory first moments
+-- TODO: bring back game restart on over
 
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
