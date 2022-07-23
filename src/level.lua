@@ -2,9 +2,10 @@
 
 function new_level(params)
     local player = params.player
-    local memory_trigger = nil
-    local invulnerability_trigger = nil
-    local coin_hide_trigger = nil
+
+    local memory_trigger
+    local invulnerability_trigger
+    local coin_hide_trigger
 
     local bg_color_normal = u.colors.dark_grey
     local bg_color_invulnerability = u.colors.pink
@@ -77,7 +78,6 @@ function new_level(params)
         if p.can_collect_coins and memory_trigger then
             if collisions.have_circles_collided(player, memory_trigger) then
                 memory_trigger = nil
-                bg_color = bg_color_normal
                 p.on_memory_trigger()
                 spawn_memory_trigger()
             end
@@ -96,6 +96,10 @@ function new_level(params)
                 coin_hide_trigger = nil
             end
         end
+    end
+
+    l.reset_bg = function()
+        bg_color = bg_color_normal
     end
 
     l.draw = function(params)

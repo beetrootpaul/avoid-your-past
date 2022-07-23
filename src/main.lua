@@ -18,20 +18,31 @@ local trail_particles = {}
 
 local invulnerable = false
 local can_collect_coins = true
+local special_phase
 
 function add_memory()
-    invulnerable = false
-    can_collect_coins = true
     local last_memory = memory_chain.last_memory_or_player(player)
     last_memory.memory = new_memory({ origin = last_memory })
 end
 
 function hide_memories()
     invulnerable = true
+    special_phase = {
+        label = "invulnerability",
+        color = u.colors.pink,
+        ttl_max = 150,
+        ttl = 150,
+    }
 end
 
 function hide_coins()
     can_collect_coins = false
+    special_phase = {
+        label = "cannot collect",
+        color = u.colors.yellow,
+        ttl_max = 90,
+        ttl = 90,
+    }
 end
 
 function _init()
@@ -53,6 +64,17 @@ function _update()
             game_state = "gameplay"
         end
         return
+    end
+
+    if special_phase then
+        if special_phase.ttl <= 0 then
+            special_phase = nil
+            invulnerable = false
+            can_collect_coins = true
+            level.reset_bg()
+        else
+            special_phase.ttl = special_phase.ttl - 1
+        end
     end
 
     if btnp(u.buttons.l) then
@@ -133,6 +155,36 @@ function _draw()
         memory_chain.for_each_memory_in_order(player, function(memory)
             memory.draw()
         end)
+    end
+
+    if special_phase then
+        print(special_phase.label, 1, 1, u.colors.red)
+        local progress_x = 1
+        local progress_y = 1 + u.text_height_px + 1
+        local progress_w = 60
+        local progress_h = 10
+        local border = 1
+        rect(
+            progress_x,
+            progress_y,
+            progress_x + progress_w - 1,
+            progress_y + progress_h - 1,
+            u.colors.white
+        )
+        rectfill(
+            progress_x + border,
+            progress_y + border,
+            progress_x + border + progress_w - 2 * border - 1,
+            progress_y + border + progress_h - 2 * border - 1,
+            u.colors.black
+        )
+        rectfill(
+            progress_x + border,
+            progress_y + border,
+            progress_x + border + (special_phase.ttl / special_phase.ttl_max) * (progress_w - 2 * border - 1),
+            progress_y + border + progress_h - 2 * border - 1,
+            special_phase.color
+        )
     end
 
     if game_state == "start" then
