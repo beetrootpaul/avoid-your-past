@@ -21,8 +21,10 @@ local can_collect_coins = true
 local special_phase
 
 function add_memory()
-    local last_memory = memory_chain.last_memory_or_player(player)
-    last_memory.memory = new_memory({ origin = last_memory })
+    if not invulnerable then
+        local last_memory = memory_chain.last_memory_or_player(player)
+        last_memory.memory = new_memory({ origin = last_memory })
+    end
 end
 
 function hide_memories()
@@ -208,3 +210,4 @@ end
 -- TODO: show 1 new memory trigger (coin?) on every item collect, instead of having a static amount of them from the very beginning
 -- TODO: show score, increase it on every coin collect
 -- TODO: rename memory triggers to coins
+-- TODO: rename invulnerable to negated vulnerable
