@@ -3,6 +3,10 @@
 function new_level(params)
     local player = params.player
     local memory_trigger = nil
+    local invulnerability_trigger = nil
+    local bg_color_normal = u.colors.dark_grey
+    local bg_color_invulnerability = u.colors.pink
+    local bg_color = bg_color_normal
 
     local get_tiles_close_to_player = function()
         local left_tile_x = flr((player.x - player.r) / u.tile_length) + 1
@@ -31,13 +35,26 @@ function new_level(params)
                 end
             end
         end
+
         local chosen_tile = rnd(available_tiles)
         if chosen_tile then
             memory_trigger = new_item({
                 x = (chosen_tile.tile_x - 0.5) * u.tile_length,
                 y = (chosen_tile.tile_y - 0.5) * u.tile_length,
-                color = u.colors.pink,
+                color = u.colors.orange,
             })
+        end
+
+        if not invulnerability_trigger and not (bg_color == bg_color_invulnerability) then
+            del(available_tiles, chosen_tile)
+            local next_chosen_tile = rnd(available_tiles)
+            if next_chosen_tile then
+                invulnerability_trigger = new_item({
+                    x = (next_chosen_tile.tile_x - 0.5) * u.tile_length,
+                    y = (next_chosen_tile.tile_y - 0.5) * u.tile_length,
+                    color = u.colors.pink,
+                })
+            end
         end
     end
 
@@ -46,14 +63,24 @@ function new_level(params)
     l.handle_collisions = function(p)
         if memory_trigger then
             if collisions.have_circles_collided(player, memory_trigger) then
-                p.on_memory_trigger()
                 memory_trigger = nil
+                bg_color = bg_color_normal
+                p.on_memory_trigger()
                 spawn_memory_trigger()
+            end
+        end
+        if invulnerability_trigger then
+            if collisions.have_circles_collided(player, invulnerability_trigger) then
+                bg_color = bg_color_invulnerability
+                p.on_invulnerability_trigger()
+                invulnerability_trigger = nil
             end
         end
     end
 
     l.draw = function()
+        rectfill(0, 0, u.screen_edge_length - 1, u.screen_edge_length - 1, bg_color)
+
         local tiles_close_to_player = get_tiles_close_to_player()
         if __debug__ then
             for tile_x = 1, u.screen_edge_tiles do
@@ -76,6 +103,9 @@ function new_level(params)
 
         if memory_trigger then
             memory_trigger.draw()
+        end
+        if invulnerability_trigger then
+            invulnerability_trigger.draw()
         end
     end
 

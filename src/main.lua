@@ -16,9 +16,16 @@ local memory_chain = new_memory_chain()
 
 local trail_particles = {}
 
+local invulnerable = false
+
 function add_memory()
+    invulnerable = false
     local last_memory = memory_chain.last_memory_or_player(player)
     last_memory.memory = new_memory({ origin = last_memory })
+end
+
+function hide_memories()
+    invulnerable = true
 end
 
 function _init()
@@ -54,30 +61,40 @@ function _update()
     if btnp(u.buttons.d) then
         player.direct_down()
     end
+
     level.handle_collisions({
-        on_memory_trigger = add_memory
+        on_memory_trigger = add_memory,
+        on_invulnerability_trigger = hide_memories,
     })
+
     if u.boolean_changing_every_nth_second(1 / 20) then
         add(trail_particles, new_trail_particle({
             x = player.x,
             y = player.y,
-            color = u.colors.brown
+            color = u.colors.brown,
+            is_of_memory = false,
         }))
     end
+
     player.move()
+
     memory_chain.for_each_memory_in_order(player, function(memory)
         if u.boolean_changing_every_nth_second(1 / 20) then
             add(trail_particles, new_trail_particle({
                 x = memory.x,
                 y = memory.y,
-                color = u.colors.purple
+                color = u.colors.purple,
+                is_of_memory = true,
             }))
         end
         memory.follow_origin()
-        if memory.is_active and collisions.have_circles_collided(memory, player) then
-            extcmd("reset")
+        if not invulnerable then
+            if memory.is_active and collisions.have_circles_collided(memory, player) then
+                extcmd("reset")
+            end
         end
     end)
+
     for i = 1, #trail_particles do
         if trail_particles[i] then
             trail_particles[i].age()
@@ -91,15 +108,22 @@ function _update()
 end
 
 function _draw()
-    cls(u.colors.dark_grey)
+    cls()
+
     level.draw()
     for i = 1, #trail_particles do
-        trail_particles[i].draw()
+        if not trail_particles[i].is_of_memory or not invulnerable then
+            trail_particles[i].draw()
+        end
     end
+
     player.draw()
-    memory_chain.for_each_memory_in_order(player, function(memory)
-        memory.draw()
-    end)
+
+    if not invulnerable then
+        memory_chain.for_each_memory_in_order(player, function(memory)
+            memory.draw()
+        end)
+    end
 
     if game_state == "start" then
         local margin = 3
