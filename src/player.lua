@@ -4,24 +4,35 @@ function new_player()
     local p = {
         x = u.screen_edge_length / 2,
         y = u.screen_edge_length / 2,
-        r = 4,
+        r = 3.5,
     }
 
     local default_speed = 3
     local dx = default_speed
     local dy = 0
+    p.direction = "r"
+    local sprite_for_direction = {
+        u = 34,
+        r = 35,
+        d = 36,
+        l = 37,
+    }
 
     p.direct_left = function()
         dx, dy = -default_speed, 0
+        p.direction = "l"
     end
     p.direct_right = function()
         dx, dy = default_speed, 0
+        p.direction = "r"
     end
     p.direct_up = function()
         dx, dy = 0, -default_speed
+        p.direction = "u"
     end
     p.direct_down = function()
         dx, dy = 0, default_speed
+        p.direction = "d"
     end
 
     p.collision_circle = function()
@@ -40,7 +51,14 @@ function new_player()
     end
 
     p.draw = function()
-        circfill(p.x, p.y, p.r, u.colors.yellow)
+        palt(u.colors.black, false)
+        palt(u.colors.dark_blue, true)
+        spr(
+            sprite_for_direction[p.direction],
+            p.x - p.r,
+            p.y - p.r
+        )
+        palt()
     end
 
     return p;
