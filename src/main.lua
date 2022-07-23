@@ -22,6 +22,9 @@ local invulnerable = false
 local can_collect_coins = true
 local special_phase
 
+local particle_counter_max = 4
+local particle_counter = particle_counter_max
+
 function add_memory()
     score = score + 10
     if not invulnerable then
@@ -122,11 +125,11 @@ function _update()
     })
     level.animate()
 
-    if u.boolean_changing_every_nth_second(1 / 20) then
+    if particle_counter == 0 then
         add(trail_particles, new_trail_particle({
             x = player.x,
             y = player.y,
-            color = u.colors.brown,
+            color = u.colors.dark_green,
             is_of_memory = false,
         }))
     end
@@ -134,7 +137,7 @@ function _update()
     player.move()
 
     memory_chain.for_each_memory_in_order(player, function(memory)
-        if memory.is_active and u.boolean_changing_every_nth_second(1 / 20) then
+        if particle_counter == 0 then
             add(trail_particles, new_trail_particle({
                 x = memory.x,
                 y = memory.y,
@@ -152,6 +155,8 @@ function _update()
             end
         end
     end)
+
+    particle_counter = (particle_counter + 1) % particle_counter_max
 
     for i = 1, #trail_particles do
         if trail_particles[i] then
@@ -238,3 +243,4 @@ end
 -- TODO: add itch URL to GitHub repo details
 -- TODO: generate cart label image
 -- TODO: clean up, refactor, access through methods only
+-- TODO: polish arrows on start

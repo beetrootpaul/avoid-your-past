@@ -4,18 +4,18 @@ function new_player()
     local p = {
         x = u.screen_edge_length / 2,
         y = u.screen_edge_length / 2,
-        r = 3.5,
+        r = 3,
     }
 
-    local default_speed = 3
+    local default_speed = 2
     local dx = default_speed
     local dy = 0
     p.direction = "r"
     local sprite_for_direction = {
-        u = 34,
-        r = 35,
-        d = 36,
-        l = 37,
+        u = 39,
+        r = 40,
+        d = 41,
+        l = 42,
     }
 
     p.direct_left = function()
@@ -59,6 +59,9 @@ function new_player()
             p.y - p.r
         )
         palt()
+        if __debug__ then
+            circfill(p.x, p.y, p.r, u.colors.red)
+        end
     end
 
     return p;

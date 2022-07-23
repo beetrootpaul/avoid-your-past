@@ -12,13 +12,13 @@ function new_memory(params)
     }
 
     local sprite_for_direction = {
-        u = 50,
-        r = 51,
-        d = 52,
-        l = 53,
+        u = 55,
+        r = 56,
+        d = 57,
+        l = 58,
     }
 
-    local delay = 30
+    local delay = 40
     local origin_state_buffer = {}
     local origin_state_buffer_index = 0
 
@@ -62,6 +62,9 @@ function new_memory(params)
             m.y - m.r
         )
         palt()
+        if __debug__ then
+            circfill(m.x, m.y, m.r, u.colors.salmon)
+        end
     end
 
     return m;
