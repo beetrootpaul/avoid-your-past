@@ -24,6 +24,14 @@ function new_player()
         dx, dy = 0, default_speed
     end
 
+    p.collision_circle = function()
+        return {
+            x = p.x,
+            y = p.y,
+            r = p.r,
+        }
+    end
+
     p.move = function()
         p.x = p.x + dx
         p.y = p.y + dy

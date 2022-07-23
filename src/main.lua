@@ -101,6 +101,7 @@ function _update()
         on_invulnerability_trigger = hide_memories,
         on_coin_hide_trigger = hide_coins,
     })
+    level.animate()
 
     if u.boolean_changing_every_nth_second(1 / 20) then
         add(trail_particles, new_trail_particle({
@@ -124,7 +125,10 @@ function _update()
         end
         memory.follow_origin()
         if not invulnerable then
-            if memory.is_active and collisions.have_circles_collided(memory, player) then
+            if memory.is_active and collisions.have_circles_collided(
+                memory.collision_circle(),
+                player.collision_circle()
+            ) then
                 extcmd("reset")
             end
         end
@@ -192,7 +196,7 @@ function _draw()
         )
     end
 
-    print("score: "..tostr(score), 1, 40, u.colors.dark_green)
+    print("score: " .. tostr(score), 1, 40, u.colors.dark_green)
 
     if game_state == "start" then
         local margin = 3
@@ -214,3 +218,4 @@ end
 -- TODO: rename invulnerable to negated vulnerable
 -- TODO: add itch URL to GitHub repo details
 -- TODO: generate cart label image
+-- TODO: clean up, refactor, access through methods only

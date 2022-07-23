@@ -14,6 +14,14 @@ function new_memory(params)
     local origin_state_buffer = {}
     local origin_state_buffer_index = 0
 
+    m.collision_circle = function()
+        return {
+            x = m.x,
+            y = m.y,
+            r = m.r,
+        }
+    end
+
     m.follow_origin = function()
         origin_state_buffer[origin_state_buffer_index] = {
             x = origin.x,
