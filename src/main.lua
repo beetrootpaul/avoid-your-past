@@ -12,6 +12,8 @@ local level = new_level({
     player = player,
 })
 
+local score = 0
+
 local memory_chain = new_memory_chain()
 
 local trail_particles = {}
@@ -21,6 +23,7 @@ local can_collect_coins = true
 local special_phase
 
 function add_memory()
+    score = score + 10
     if not invulnerable then
         local last_memory = memory_chain.last_memory_or_player(player)
         last_memory.memory = new_memory({ origin = last_memory })
@@ -162,7 +165,7 @@ function _draw()
     if special_phase then
         print(special_phase.label, 1, 1, u.colors.red)
         local progress_x = 1
-        local progress_y = 1 + u.text_height_px + 1
+        local progress_y = u.text_height_px + 2
         local progress_w = 60
         local progress_h = 10
         local border = 1
@@ -189,6 +192,8 @@ function _draw()
         )
     end
 
+    print("score: "..tostr(score), 1, 40, u.colors.dark_green)
+
     if game_state == "start" then
         local margin = 3
         local time_dependent_boolean = u.boolean_changing_every_nth_second(0.5)
@@ -211,3 +216,4 @@ end
 -- TODO: show score, increase it on every coin collect
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
+-- TODO: add itch URL to GitHub repo details
