@@ -208,12 +208,9 @@ end
 -- TODO: extract some noise out of main.lua
 -- TODO: SFXs
 -- TODO: VFXs
--- TODO: color changer, memories not harmful nor visible in same color
--- TODO: keys to collect to open level's exit
 -- TODO: better README: screenshots, explanation, keys
 -- TODO: entry screen with a game title and author (Twitter handle, www)
--- TODO: show 1 new memory trigger (coin?) on every item collect, instead of having a static amount of them from the very beginning
--- TODO: show score, increase it on every coin collect
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
 -- TODO: add itch URL to GitHub repo details
+-- TODO: generate cart label image

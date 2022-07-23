@@ -1,4 +1,4 @@
-# Living in the Past
+# Avoid Your Past
 
 > a snake-like mini-game where each collected coin brings a harmful memory of your past steps
 
