@@ -1,5 +1,7 @@
 -- main
 
+--__debug__ = true
+
 local game_state = "start"
 
 local player = new_player({
@@ -7,7 +9,7 @@ local player = new_player({
 })
 
 local level = new_level({
-    number_of_memory_triggers = 5
+    player = player,
 })
 
 local memory_chain = new_memory_chain()
@@ -53,12 +55,9 @@ function _update()
         player.direct_down()
     end
     level.handle_collisions({
-        collision_circle_x = player.x,
-        collision_circle_y = player.y,
-        collision_circle_r = player.r,
         on_memory_trigger = add_memory
     })
-    if u.boolean_changing_every_nth_second(1/20) then
+    if u.boolean_changing_every_nth_second(1 / 20) then
         add(trail_particles, new_trail_particle({
             x = player.x,
             y = player.y,
@@ -67,7 +66,7 @@ function _update()
     end
     player.move()
     memory_chain.for_each_memory_in_order(player, function(memory)
-        if u.boolean_changing_every_nth_second(1/20) then
+        if u.boolean_changing_every_nth_second(1 / 20) then
             add(trail_particles, new_trail_particle({
                 x = memory.x,
                 y = memory.y,
@@ -122,3 +121,4 @@ end
 -- TODO: entry screen with a game title and author (Twitter handle, www)
 -- TODO: show 1 new memory trigger (coin?) on every item collect, instead of having a static amount of them from the very beginning
 -- TODO: show score, increase it on every coin collect
+-- TODO: rename memory triggers to coins
