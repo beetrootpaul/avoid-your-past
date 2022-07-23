@@ -115,7 +115,7 @@ function _update()
     player.move()
 
     memory_chain.for_each_memory_in_order(player, function(memory)
-        if u.boolean_changing_every_nth_second(1 / 20) then
+        if memory.is_active and u.boolean_changing_every_nth_second(1 / 20) then
             add(trail_particles, new_trail_particle({
                 x = memory.x,
                 y = memory.y,
