@@ -1,5 +1,7 @@
 -- main
 
+--__debug__ = true
+
 local game_state = "start"
 
 local player = new_player({
@@ -7,16 +9,45 @@ local player = new_player({
 })
 
 local level = new_level({
-    number_of_memory_triggers = 5
+    player = player,
 })
+
+local score = 0
 
 local memory_chain = new_memory_chain()
 
 local trail_particles = {}
 
+local invulnerable = false
+local can_collect_coins = true
+local special_phase
+
 function add_memory()
-    local last_memory = memory_chain.last_memory_or_player(player)
-    last_memory.memory = new_memory({ origin = last_memory })
+    score = score + 10
+    if not invulnerable then
+        local last_memory = memory_chain.last_memory_or_player(player)
+        last_memory.memory = new_memory({ origin = last_memory })
+    end
+end
+
+function hide_memories()
+    invulnerable = true
+    special_phase = {
+        label = "invulnerability",
+        color = u.colors.pink,
+        ttl_max = 150,
+        ttl = 150,
+    }
+end
+
+function hide_coins()
+    can_collect_coins = false
+    special_phase = {
+        label = "cannot collect",
+        color = u.colors.yellow,
+        ttl_max = 90,
+        ttl = 90,
+    }
 end
 
 function _init()
@@ -40,6 +71,17 @@ function _update()
         return
     end
 
+    if special_phase then
+        if special_phase.ttl <= 0 then
+            special_phase = nil
+            invulnerable = false
+            can_collect_coins = true
+            level.reset_bg()
+        else
+            special_phase.ttl = special_phase.ttl - 1
+        end
+    end
+
     if btnp(u.buttons.l) then
         player.direct_left()
     end
@@ -52,33 +94,42 @@ function _update()
     if btnp(u.buttons.d) then
         player.direct_down()
     end
+
     level.handle_collisions({
-        collision_circle_x = player.x,
-        collision_circle_y = player.y,
-        collision_circle_r = player.r,
-        on_memory_trigger = add_memory
+        can_collect_coins = can_collect_coins,
+        on_memory_trigger = add_memory,
+        on_invulnerability_trigger = hide_memories,
+        on_coin_hide_trigger = hide_coins,
     })
-    if u.boolean_changing_every_nth_second(1/20) then
+
+    if u.boolean_changing_every_nth_second(1 / 20) then
         add(trail_particles, new_trail_particle({
             x = player.x,
             y = player.y,
-            color = u.colors.brown
+            color = u.colors.brown,
+            is_of_memory = false,
         }))
     end
+
     player.move()
+
     memory_chain.for_each_memory_in_order(player, function(memory)
-        if u.boolean_changing_every_nth_second(1/20) then
+        if u.boolean_changing_every_nth_second(1 / 20) then
             add(trail_particles, new_trail_particle({
                 x = memory.x,
                 y = memory.y,
-                color = u.colors.purple
+                color = u.colors.purple,
+                is_of_memory = true,
             }))
         end
         memory.follow_origin()
-        if memory.is_active and collisions.have_circles_collided(memory, player) then
-            extcmd("reset")
+        if not invulnerable then
+            if memory.is_active and collisions.have_circles_collided(memory, player) then
+                extcmd("reset")
+            end
         end
     end)
+
     for i = 1, #trail_particles do
         if trail_particles[i] then
             trail_particles[i].age()
@@ -92,15 +143,56 @@ function _update()
 end
 
 function _draw()
-    cls(u.colors.dark_grey)
-    level.draw()
+    cls()
+
+    level.draw({
+        can_collect_coins = can_collect_coins,
+    })
     for i = 1, #trail_particles do
-        trail_particles[i].draw()
+        if not trail_particles[i].is_of_memory or not invulnerable then
+            trail_particles[i].draw()
+        end
     end
+
     player.draw()
-    memory_chain.for_each_memory_in_order(player, function(memory)
-        memory.draw()
-    end)
+
+    if not invulnerable then
+        memory_chain.for_each_memory_in_order(player, function(memory)
+            memory.draw()
+        end)
+    end
+
+    if special_phase then
+        print(special_phase.label, 1, 1, u.colors.red)
+        local progress_x = 1
+        local progress_y = u.text_height_px + 2
+        local progress_w = 60
+        local progress_h = 10
+        local border = 1
+        rect(
+            progress_x,
+            progress_y,
+            progress_x + progress_w - 1,
+            progress_y + progress_h - 1,
+            u.colors.white
+        )
+        rectfill(
+            progress_x + border,
+            progress_y + border,
+            progress_x + border + progress_w - 2 * border - 1,
+            progress_y + border + progress_h - 2 * border - 1,
+            u.colors.black
+        )
+        rectfill(
+            progress_x + border,
+            progress_y + border,
+            progress_x + border + (special_phase.ttl / special_phase.ttl_max) * (progress_w - 2 * border - 1),
+            progress_y + border + progress_h - 2 * border - 1,
+            special_phase.color
+        )
+    end
+
+    print("score: "..tostr(score), 1, 40, u.colors.dark_green)
 
     if game_state == "start" then
         local margin = 3
@@ -116,9 +208,9 @@ end
 -- TODO: extract some noise out of main.lua
 -- TODO: SFXs
 -- TODO: VFXs
--- TODO: color changer, memories not harmful nor visible in same color
--- TODO: keys to collect to open level's exit
 -- TODO: better README: screenshots, explanation, keys
 -- TODO: entry screen with a game title and author (Twitter handle, www)
--- TODO: show 1 new memory trigger (coin?) on every item collect, instead of having a static amount of them from the very beginning
--- TODO: show score, increase it on every coin collect
+-- TODO: rename memory triggers to coins
+-- TODO: rename invulnerable to negated vulnerable
+-- TODO: add itch URL to GitHub repo details
+-- TODO: generate cart label image

@@ -9,7 +9,8 @@ function new_trail_particle(params)
     local max_r = 4
 
     local to = {
-        ttl = max_ttl
+        ttl = max_ttl,
+        is_of_memory = params.is_of_memory,
     }
 
     to.age = function()

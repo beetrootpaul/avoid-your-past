@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 36
 __lua__
--- TODO rename mini-jam-111
+-- avoid your past
 -- by beetroot paul
 
 #include src/utils.lua
