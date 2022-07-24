@@ -1,8 +1,11 @@
 -- game_state_splash
 
 function new_game_state_splash()
-    music(1)
+    music(1, nil, 15)
+    sfx(-1, 0)
     sfx(4, 1)
+    sfx(5, 2)
+    sfx(6, 3)
 
     local ttl_max = 120
     local ttl = ttl_max

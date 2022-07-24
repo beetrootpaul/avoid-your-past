@@ -1,7 +1,10 @@
 -- game_state_start
 
 function new_game_state_start()
+    sfx(-1, 0)
     sfx(4, 1)
+    sfx(5, 2)
+    sfx(6, 3)
 
     local player = new_player({
         memory = nil,
