@@ -72,7 +72,7 @@ function new_game_state_over(params)
                 text.score,
                 u.screen_edge_px / 2 - text_score_w / 2,
                 sash_center_y + 2,
-                u.colors.yellow,
+                u.colors.pink,
                 u.colors.black
             )
         end

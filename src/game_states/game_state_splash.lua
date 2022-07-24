@@ -53,7 +53,7 @@ function new_game_state_splash()
                 text.title,
                 u.screen_edge_px / 2 - text_title_w / 2,
                 sash_center_y - u.text_height_px - 3,
-                u.colors.yellow,
+                u.colors.pink,
                 u.colors.black
             )
             print(

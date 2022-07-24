@@ -8,7 +8,7 @@ function new_game_state_gameplay(params)
     local memory_chain = new_memory_chain()
 
     local trail_particles = {}
-    local invulnerable = false
+    local vulnerable = true
     local can_collect_coins = true
 
     local score = 0
@@ -20,7 +20,7 @@ function new_game_state_gameplay(params)
     function on_coin_taken()
         sfx(0)
         score = score + 10
-        if not invulnerable then
+        if vulnerable then
             local last_memory = memory_chain.last_memory_or_player(player)
             last_memory.memory = new_memory({ origin = last_memory })
         end
@@ -28,9 +28,10 @@ function new_game_state_gameplay(params)
 
     function hide_memories()
         sfx(2)
-        invulnerable = true
+        score = score + 1
+        vulnerable = false
         special_phase = {
-            label = "invulnerability",
+            label = "invulnerable",
             color = u.colors.pink,
             ttl_max = 150,
             ttl = 150,
@@ -39,6 +40,7 @@ function new_game_state_gameplay(params)
 
     function hide_coins()
         sfx(1)
+        score = score + 3
         can_collect_coins = false
         special_phase = {
             label = "cannot collect coins",
@@ -80,7 +82,7 @@ function new_game_state_gameplay(params)
             end
             if special_phase.ttl <= 0 then
                 special_phase = nil
-                invulnerable = false
+                vulnerable = true
                 can_collect_coins = true
                 level.reset_bg()
                 level.set_bg_pattern(nil)
@@ -121,7 +123,7 @@ function new_game_state_gameplay(params)
                 }))
             end
             memory.follow_origin()
-            if not invulnerable then
+            if vulnerable then
                 if memory.is_active and collisions.have_circles_collided(
                     memory.collision_circle(),
                     player.collision_circle()
@@ -158,7 +160,7 @@ function new_game_state_gameplay(params)
         level.draw_bg()
 
         for i = 1, #trail_particles do
-            if not trail_particles[i].is_of_memory or not invulnerable then
+            if not trail_particles[i].is_of_memory or vulnerable then
                 trail_particles[i].draw()
             end
         end
@@ -169,7 +171,7 @@ function new_game_state_gameplay(params)
 
         player.draw()
 
-        if not invulnerable then
+        if vulnerable then
             memory_chain.for_each_memory_in_order(player, function(memory)
                 memory.draw()
             end)

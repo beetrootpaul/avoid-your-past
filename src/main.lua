@@ -21,6 +21,7 @@ end
 -- TODO: MUSIC
 
 -- TODO: extract particles to a separate file
+-- TODO: extract special state to a separate file
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
 -- TODO: clean up, refactor, access through methods only
