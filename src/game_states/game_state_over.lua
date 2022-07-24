@@ -1,6 +1,8 @@
 -- game_state_over
 
 function new_game_state_over(params)
+    sfx(4, 1)
+
     local player = params.player
     local level = params.level
     local score = params.score

@@ -1,6 +1,8 @@
 -- game_state_gameplay
 
 function new_game_state_gameplay(params)
+    sfx(-1, 1)
+
     local topbar = new_topbar()
     local player = params.player
     local level = params.level

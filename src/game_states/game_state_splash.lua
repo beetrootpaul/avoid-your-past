@@ -1,6 +1,9 @@
 -- game_state_splash
 
 function new_game_state_splash()
+    music(1)
+    sfx(4, 1)
+
     local ttl_max = 120
     local ttl = ttl_max
     local ttl_collapse_start = 4
