@@ -6,7 +6,7 @@ local gs
 
 
 function _init()
-    gs = new_game_state_start()
+    gs = new_game_state_splash()
 end
 
 function _update()
@@ -19,7 +19,6 @@ function _draw()
 end
 
 -- TODO: VFXs
--- TODO: entry screen with a game title and author (Twitter handle, www)
 -- TODO: polish arrows on start
 -- TODO: fix memory first moments
 

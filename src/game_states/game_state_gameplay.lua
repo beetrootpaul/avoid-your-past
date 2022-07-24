@@ -126,7 +126,6 @@ function new_game_state_gameplay(params)
                     memory.collision_circle(),
                     player.collision_circle()
                 ) then
-                    sfx(3)
                     has_collided_with_memory = true
                 end
             end
@@ -149,6 +148,7 @@ function new_game_state_gameplay(params)
             return new_game_state_over({
                 player = player,
                 level = level,
+                score = score,
             })
         end
         return gs
