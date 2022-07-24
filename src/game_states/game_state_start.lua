@@ -44,13 +44,23 @@ function new_game_state_start()
         })
         player.draw()
 
-        local margin = 3
-        local time_dependent_boolean = u.boolean_changing_every_nth_second(0.5)
-        local glyph_color = time_dependent_boolean and u.colors.light_grey or u.colors.violet_grey
-        u.print_with_outline("⬅️", player.x - player.r - margin - 8, u.topbar_h_px + player.y - 2, glyph_color, u.colors.dark_grey)
-        u.print_with_outline("➡️", player.x + player.r + margin + 2, u.topbar_h_px + player.y - 2, glyph_color, u.colors.dark_grey)
-        u.print_with_outline("⬆️", player.x - 3, u.topbar_h_px + player.y - player.r - margin - 6, glyph_color, u.colors.dark_grey)
-        u.print_with_outline("⬇️", player.x - 3, u.topbar_h_px + player.y + player.r + margin + 2, glyph_color, u.colors.dark_grey)
+        local margin = 6
+        local prompt = {
+            "press an arrow",
+            "to choose direction",
+        }
+        local prompt_w = {
+            u.measure_text_width(prompt[1]),
+            u.measure_text_width(prompt[2]),
+        }
+        u.print_with_outline(prompt[1], player.x - prompt_w[1] / 2, u.topbar_h_px + player.y - player.r - margin - 26, u.colors.violet_grey, u.colors.dark_blue)
+        u.print_with_outline(prompt[2], player.x - prompt_w[2] / 2, u.topbar_h_px + player.y - player.r - margin - 17, u.colors.violet_grey, u.colors.dark_blue)
+        local time_dependent_boolean = u.boolean_changing_every_nth_second(0.6)
+        local glyph_color = time_dependent_boolean and u.colors.blue or u.colors.violet_grey
+        u.print_with_outline("⬅️", player.x - player.r - margin - 8, u.topbar_h_px + player.y - 2, glyph_color, u.colors.dark_blue)
+        u.print_with_outline("➡️", player.x + player.r + margin + 2, u.topbar_h_px + player.y - 2, glyph_color, u.colors.dark_blue)
+        u.print_with_outline("⬆️", player.x - 3, u.topbar_h_px + player.y - player.r - margin - 6, glyph_color, u.colors.dark_blue)
+        u.print_with_outline("⬇️", player.x - 3, u.topbar_h_px + player.y + player.r + margin + 2, glyph_color, u.colors.dark_blue)
     end
 
     return gs

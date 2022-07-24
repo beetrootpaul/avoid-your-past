@@ -18,7 +18,6 @@ function _draw()
     gs.draw()
 end
 
--- TODO: VFXs
 -- TODO: polish arrows on start
 -- TODO: fix memory first moments
 
