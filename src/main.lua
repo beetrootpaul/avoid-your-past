@@ -18,8 +18,7 @@ function _draw()
     gs.draw()
 end
 
--- TODO: polish arrows on start
--- TODO: fix memory first moments
+-- TODO: MUSIC
 
 -- TODO: extract particles to a separate file
 -- TODO: rename memory triggers to coins

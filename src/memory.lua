@@ -52,14 +52,15 @@ function new_memory(params)
     end
 
     m.draw = function()
-        local color = m.is_active and u.colors.pink or u.colors.violet_grey
         palt(u.colors.black, false)
         palt(u.colors.dark_blue, true)
-        spr(
-            sprite_for_direction[m.direction],
-            m.x - m.r,
-            u.topbar_h_px + m.y - m.r
-        )
+        if m.is_active then
+            spr(
+                sprite_for_direction[m.direction],
+                m.x - m.r,
+                u.topbar_h_px + m.y - m.r
+            )
+        end
         palt()
         if __debug__ then
             circfill(m.x, u.topbar_h_px + m.y, m.r, u.colors.salmon)
