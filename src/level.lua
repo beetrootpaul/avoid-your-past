@@ -148,7 +148,7 @@ function new_level(params)
         bg_pattern = bg_pattern_or_nil
     end
 
-    l.draw = function(params)
+    l.draw_bg = function()
         if bg_pattern then
             fillp(bg_pattern)
         end
@@ -180,7 +180,9 @@ function new_level(params)
                 end
             end
         end
+    end
 
+    l.draw_items = function(params)
         if memory_trigger and params.can_collect_coins then
             memory_trigger.draw()
         end
