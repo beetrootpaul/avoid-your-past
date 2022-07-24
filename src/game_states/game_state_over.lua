@@ -1,6 +1,11 @@
 -- game_state_over
 
 function new_game_state_over(params)
+    sfx(-1, 0)
+    sfx(4, 1)
+    sfx(5, 2)
+    sfx(6, 3)
+
     local player = params.player
     local level = params.level
     local score = params.score
@@ -17,13 +22,10 @@ function new_game_state_over(params)
     local gs = {}
 
     gs.update = function()
-        if ttl >= ttl_max then
-            sfx(3)
-        end
         if ttl <= 0 then
             return new_game_state_start()
         end
-        if ttl > ttl_expansion_end then
+        if ttl < ttl_expansion_end then
             if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
                 ttl = ttl_collapse_start
             end

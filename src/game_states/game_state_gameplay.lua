@@ -1,6 +1,11 @@
 -- game_state_gameplay
 
 function new_game_state_gameplay(params)
+    sfx(-1, 0)
+    sfx(-1, 1)
+    sfx(5, 2)
+    sfx(6, 3)
+
     local topbar = new_topbar()
     local player = params.player
     local level = params.level
@@ -18,7 +23,7 @@ function new_game_state_gameplay(params)
     local particle_counter = particle_counter_max
 
     function on_coin_taken()
-        sfx(0)
+        sfx(0, 0)
         score = score + 10
         if vulnerable then
             local last_memory = memory_chain.last_memory_or_player(player)
@@ -27,7 +32,11 @@ function new_game_state_gameplay(params)
     end
 
     function hide_memories()
-        sfx(2)
+        sfx(2, 0)
+        sfx(-1, 1)
+        sfx(-1, 2)
+        sfx(6, 3)
+
         score = score + 1
         vulnerable = false
         special_phase = {
@@ -39,7 +48,11 @@ function new_game_state_gameplay(params)
     end
 
     function hide_coins()
-        sfx(1)
+        sfx(1, 0)
+        sfx(-1, 1)
+        sfx(5, 2)
+        sfx(-1, 3)
+
         score = score + 3
         can_collect_coins = false
         special_phase = {
@@ -81,6 +94,11 @@ function new_game_state_gameplay(params)
                 level.set_bg_pattern(nil)
             end
             if special_phase.ttl <= 0 then
+                sfx(-1, 0)
+                sfx(-1, 1)
+                sfx(5, 2)
+                sfx(6, 3)
+
                 special_phase = nil
                 vulnerable = true
                 can_collect_coins = true
