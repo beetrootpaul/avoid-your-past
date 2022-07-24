@@ -23,8 +23,10 @@ function new_game_state_over(params)
         if ttl <= 0 then
             return new_game_state_start()
         end
-        if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
-            ttl = ttl_collapse_start
+        if ttl > ttl_expansion_end then
+            if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
+                ttl = ttl_collapse_start
+            end
         end
         ttl = ttl - 1
         return gs

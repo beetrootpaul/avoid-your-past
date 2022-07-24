@@ -14,6 +14,7 @@ function new_topbar()
 
         if p.special_phase then
             local progress_w = u.measure_text_width(p.special_phase.label)
+            local progress_remaining_w = (p.special_phase.ttl / p.special_phase.ttl_max) * progress_w
             local progress_x = u.screen_edge_px - progress_w - 1
             local progress_y = text_y + u.text_height_px + 2
             local progress_h = 1
@@ -23,13 +24,15 @@ function new_topbar()
                 text_y,
                 u.colors.light_grey
             )
-            rectfill(
-                progress_x,
-                progress_y,
-                progress_x + (p.special_phase.ttl / p.special_phase.ttl_max) * (progress_w - 1),
-                progress_y + progress_h - 1,
-                p.special_phase.color
-            )
+            if progress_remaining_w > 0 then
+                line(
+                    progress_x + progress_w - progress_remaining_w,
+                    progress_y,
+                    progress_x + progress_w - 1,
+                    progress_y + progress_h - 1,
+                    p.special_phase.color
+                )
+            end
         end
 
         print(
