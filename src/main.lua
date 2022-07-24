@@ -18,8 +18,6 @@ function _draw()
     gs.draw()
 end
 
--- TODO: MUSIC
-
 -- TODO: extract particles to a separate file
 -- TODO: extract special state to a separate file
 -- TODO: rename memory triggers to coins
@@ -28,4 +26,3 @@ end
 
 -- TODO: better README: screenshots, explanation, keys
 -- TODO: add itch URL to GitHub repo details
--- TODO: generate cart label image
