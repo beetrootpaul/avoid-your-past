@@ -1,75 +1,67 @@
--- game_state_splash
+-- -- -- -- -- -- -- -- -- -- -- --
+-- game_states/game_state_splash --
+-- -- -- -- -- -- -- -- -- -- -- --
 
 function new_game_state_splash()
-    music(1, nil, 15)
-    sfx(-1, 0)
-    sfx(4, 1)
-    sfx(5, 2)
-    sfx(6, 3)
-
-    local ttl_max = 120
-    local ttl = ttl_max
-    local ttl_collapse_start = 4
-
-    local sash_h_max = 30
-    local sash_center_y = u.topbar_h_px + (u.screen_edge_px - u.topbar_h_px) / 2
-
-    local gs = {}
-
-    gs.update = function()
-        if ttl <= 0 then
-            return new_game_state_start()
-        end
-        if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
-            ttl = ttl_collapse_start
-        end
-        ttl = ttl - 1
-        return gs
-    end
-
-    gs.draw = function()
-        rectfill(
-            0, u.topbar_h_px,
-            u.screen_edge_px - 1, u.screen_edge_px - 1,
-            u.colors.dark_blue
-        )
-
-        local sash_h
-        local text
-        if ttl <= ttl_collapse_start then
-            sash_h = sash_h_max * ttl / ttl_collapse_start
-        else
-            sash_h = sash_h_max
-            text = {
-                title = "avoid your past",
-                author = "by @beetrootpaul",
-            }
-        end
-        if sash_h > 0 then
-            rectfill(
-                0, sash_center_y - sash_h / 2,
-                u.screen_edge_px - 1, sash_center_y + sash_h / 2 - 1,
-                u.colors.dark_green
-            )
-        end
-        if text then
-            local text_title_w = u.measure_text_width(text.title)
-            local text_author_w = u.measure_text_width(text.author)
+    local sash = new_sash({
+        duration = 10 * a.music_beat_frames,
+        expand = false,
+        draw_text = function(sash_center_x, sash_center_y)
+            local title = "avoid your past"
+            local title_w = u.measure_text_width(title)
+            local author = "by @beetrootpaul"
+            local author_w = u.measure_text_width(author)
             u.print_with_outline(
-                text.title,
-                u.screen_edge_px / 2 - text_title_w / 2,
+                title,
+                sash_center_x - title_w / 2,
                 sash_center_y - u.text_height_px - 3,
                 u.colors.pink,
                 u.colors.black
             )
             print(
-                text.author,
-                u.screen_edge_px / 2 - text_author_w / 2,
+                author,
+                sash_center_x - author_w / 2,
                 sash_center_y + 2,
                 u.colors.white
             )
-        end
-    end
+        end,
+    })
 
-    return gs
+    audio.play_music()
+    audio.enable_music_layers { false, false, false }
+
+    return {
+
+        --
+
+        update = function(self)
+            if sash.has_collapsed() then
+                return new_game_state_start()
+            end
+
+            if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
+                sash.collapse()
+            end
+
+            sash.advance_1_frame()
+
+            return self
+        end,
+
+        --
+
+        draw = function()
+            rectfill(
+                a.camera_x,
+                a.camera_y,
+                a.camera_x + u.screen_px - 1,
+                a.camera_y + u.screen_px - 1,
+                a.bg_color_mode_normal
+            )
+            sash.draw()
+        end,
+
+        --
+
+    }
 end

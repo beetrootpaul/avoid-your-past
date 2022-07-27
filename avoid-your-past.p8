@@ -4,22 +4,29 @@ __lua__
 -- avoid your past
 -- by beetroot paul
 
-#include src/utils.lua
-#include src/collisions.lua
+#include src/global/utils.lua
+#include src/global/assets.lua
+#include src/global/audio.lua
+#include src/global/collisions.lua
 
 #include src/game_states/game_state_gameplay.lua
 #include src/game_states/game_state_over.lua
 #include src/game_states/game_state_splash.lua
 #include src/game_states/game_state_start.lua
 
-#include src/animated_sprite.lua
-#include src/item.lua
-#include src/level.lua
-#include src/memory.lua
-#include src/memory_chain.lua
-#include src/player.lua
-#include src/topbar.lua
-#include src/trail_particle.lua
+#include src/gui/sash.lua
+#include src/gui/topbar.lua
+
+#include src/gameplay/animated_sprite.lua
+#include src/gameplay/item.lua
+#include src/gameplay/level.lua
+#include src/gameplay/memories.lua
+#include src/gameplay/memory.lua
+#include src/gameplay/mode.lua
+#include src/gameplay/particle.lua
+#include src/gameplay/player.lua
+#include src/gameplay/score.lua
+#include src/gameplay/trail.lua
 
 #include src/main.lua
 

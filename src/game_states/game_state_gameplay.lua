@@ -1,205 +1,118 @@
--- game_state_gameplay
+-- -- -- -- -- -- -- -- -- -- -- -- --
+-- game_states/game_state_gameplay  --
+-- -- -- -- -- -- -- -- -- -- -- -- --
 
 function new_game_state_gameplay(params)
-    sfx(-1, 0)
-    sfx(-1, 1)
-    sfx(5, 2)
-    sfx(6, 3)
-
-    local topbar = new_topbar()
-    local player = params.player
+    local mode = params.mode
+    local topbar = params.topbar
+    local score = params.score
     local level = params.level
+    local player = params.player
 
-    local memory_chain = new_memory_chain()
+    local memories = new_memories {
+        player = player,
+    }
+    local player_trail = new_trail {
+        origin = player,
+        color = u.colors.dark_green,
+    }
 
-    local trail_particles = {}
-    local vulnerable = true
-    local can_collect_coins = true
-
-    local score = 0
-    local special_phase
-
-    local particle_counter_max = 4
-    local particle_counter = particle_counter_max
-
-    function on_coin_taken()
-        sfx(0, 0)
-        score = score + 10
-        if vulnerable then
-            local last_memory = memory_chain.last_memory_or_player(player)
-            last_memory.memory = new_memory({ origin = last_memory })
-        end
+    local function on_back_to_regular_mode()
+        audio.enable_music_layers { true, false, false }
     end
 
-    function hide_memories()
-        sfx(2, 0)
-        sfx(-1, 1)
-        sfx(-1, 2)
-        sfx(6, 3)
+    local function on_coin_collision()
+        if mode.is_no_coins() then
+            return
+        end
 
-        score = score + 1
-        vulnerable = false
-        special_phase = {
-            label = "invulnerable",
-            color = u.colors.pink,
-            ttl_max = 150,
-            ttl = 150,
-        }
+        audio.play_sfx(a.sfx_coin)
+        score.add(10)
+        if not mode.is_no_memories() then
+            memories.add_memory()
+        end
+        level.remove_coin()
+        level.spawn_items()
     end
 
-    function hide_coins()
-        sfx(1, 0)
-        sfx(-1, 1)
-        sfx(5, 2)
-        sfx(-1, 3)
-
-        score = score + 3
-        can_collect_coins = false
-        special_phase = {
-            label = "cannot collect coins",
-            color = u.colors.orange,
-            ttl_max = 90,
-            ttl = 90,
-        }
+    local function on_droplet_no_coins_collision()
+        audio.enable_music_layers { true, false, true }
+        score.add(3)
+        mode.start_no_coins()
+        level.remove_droplet_no_coins()
     end
 
-    local gs = {}
+    local function on_droplet_no_memories_collision()
+        audio.enable_music_layers { true, true, false }
+        score.add(1)
+        mode.start_no_memories()
+        level.remove_droplet_no_memories()
+    end
 
-    gs.update = function()
-        if btnp(u.buttons.l) then
-            player.direct_left()
-        elseif btnp(u.buttons.r) then
-            player.direct_right()
-        elseif btnp(u.buttons.u) then
-            player.direct_up()
-        elseif btnp(u.buttons.d) then
-            player.direct_down()
-        end
+    audio.enable_music_layers { true, false, false }
 
-        if special_phase then
-            level.set_bg_color(special_phase.color)
-            local transition_speed = 1
-            local ttl_distance_from_start_end = min(special_phase.ttl, special_phase.ttl_max - special_phase.ttl)
-            if ttl_distance_from_start_end < transition_speed then
-                level.set_bg_pattern(1 + 2 + 4 + 8 + 16 + 32 + 128 + 256 + 512 + 1024 + 2048 + 4096 + 8192 + 16384 + 32768)
-            elseif ttl_distance_from_start_end < 2 * transition_speed then
-                level.set_bg_pattern(1 + 2 + 4 + 8 + 32 + 128 + 256 + 512 + 1024 + 2048 + 8192 + 32768)
-            elseif ttl_distance_from_start_end < 3 * transition_speed then
-                level.set_bg_pattern(1 + 4 + 32 + 128 + 256 + 1024 + 8192 + 32768)
-            elseif ttl_distance_from_start_end < 4 * transition_speed then
-                level.set_bg_pattern(1 + 4 + 256 + 1024)
-            elseif ttl_distance_from_start_end < 5 * transition_speed then
-                level.set_bg_pattern(1)
-            else
-                level.set_bg_pattern(nil)
+    return {
+
+        --
+
+        update = function(self)
+            if btnp(u.buttons.l) then
+                player.direct_left()
+            elseif btnp(u.buttons.r) then
+                player.direct_right()
+            elseif btnp(u.buttons.u) then
+                player.direct_up()
+            elseif btnp(u.buttons.d) then
+                player.direct_down()
             end
-            if special_phase.ttl <= 0 then
-                sfx(-1, 0)
-                sfx(-1, 1)
-                sfx(5, 2)
-                sfx(6, 3)
 
-                special_phase = nil
-                vulnerable = true
-                can_collect_coins = true
-                level.reset_bg()
-                level.set_bg_pattern(nil)
-            else
-                special_phase.ttl = special_phase.ttl - 1
-            end
-        else
-            level.reset_bg()
-        end
+            mode.update {
+                on_back_to_regular_mode = on_back_to_regular_mode
+            }
 
-        level.handle_collisions({
-            can_collect_coins = can_collect_coins,
-            on_memory_trigger = on_coin_taken,
-            on_invulnerability_trigger = hide_memories,
-            on_coin_hide_trigger = hide_coins,
-        })
+            level.check_collisions {
+                on_coin = on_coin_collision,
+                on_droplet_no_coins = on_droplet_no_coins_collision,
+                on_droplet_no_memories = on_droplet_no_memories_collision,
+            }
 
-        level.animate()
+            level.animate()
 
-        if particle_counter == 0 then
-            add(trail_particles, new_trail_particle({
-                x = player.x,
-                y = player.y,
-                color = u.colors.dark_green,
-                is_of_memory = false,
-            }))
-        end
-        player.move()
+            player_trail.update()
+            player.move()
 
-        local has_collided_with_memory = false
-        memory_chain.for_each_memory_in_order(player, function(memory)
-            if particle_counter == 0 then
-                add(trail_particles, new_trail_particle({
-                    x = memory.x,
-                    y = memory.y,
-                    color = u.colors.purple,
-                    is_of_memory = true,
-                }))
-            end
-            memory.follow_origin()
-            if vulnerable then
-                if memory.is_active and collisions.have_circles_collided(
-                    memory.collision_circle(),
-                    player.collision_circle()
-                ) then
-                    has_collided_with_memory = true
+            memories.move()
+
+            if not mode.is_no_memories() then
+                if memories.has_player_collided_with_memory() then
+                    return new_game_state_over {
+                        score = score,
+                        level = level,
+                        player = player,
+                    }
                 end
             end
-        end)
 
-        particle_counter = (particle_counter + 1) % particle_counter_max
+            return self
+        end,
 
-        for i = 1, #trail_particles do
-            if trail_particles[i] then
-                trail_particles[i].age()
-                if trail_particles[i].ttl <= 0 then
-                    deli(trail_particles, i)
-                    trail_particles[i] = trail_particles[#trail_particles]
-                    trail_particles[#trail_particles] = nil
-                end
+        --
+
+        draw = function()
+            level.draw_bg()
+            level.draw_items()
+
+            player_trail.draw()
+            player.draw()
+
+            if not mode.is_no_memories() then
+                memories.draw()
             end
-        end
 
-        if has_collided_with_memory then
-            return new_game_state_over({
-                player = player,
-                level = level,
-                score = score,
-            })
-        end
-        return gs
-    end
+            topbar.draw()
+        end,
 
-    gs.draw = function()
-        level.draw_bg()
+        --
 
-        for i = 1, #trail_particles do
-            if not trail_particles[i].is_of_memory or vulnerable then
-                trail_particles[i].draw()
-            end
-        end
-
-        level.draw_items({
-            can_collect_coins = can_collect_coins,
-        })
-
-        player.draw()
-
-        if vulnerable then
-            memory_chain.for_each_memory_in_order(player, function(memory)
-                memory.draw()
-            end)
-        end
-
-        topbar.draw({
-            score = score,
-            special_phase = special_phase,
-        })
-    end
-
-    return gs
+    }
 end
