@@ -23,6 +23,3 @@ end
 -- TODO: rename memory triggers to coins
 -- TODO: rename invulnerable to negated vulnerable
 -- TODO: clean up, refactor, access through methods only
-
--- TODO: better README: screenshots, explanation, keys
--- TODO: add itch URL to GitHub repo details
