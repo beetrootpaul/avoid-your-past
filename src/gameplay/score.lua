@@ -5,21 +5,21 @@
 function new_score()
     local value = 0
 
-    return {
+    local s = {}
 
-        --
+    --
 
-        value = function()
-            return value
-        end,
+    function s.value()
+        return value
+    end
 
-        --
+    --
 
-        add = function(points)
-            value = value + points
-        end,
+    function s.add(points)
+        value = value + points
+    end
 
-        --
+    --
 
-    }
+    return s
 end

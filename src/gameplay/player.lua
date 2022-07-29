@@ -19,86 +19,86 @@ function new_player()
         l = 42,
     }
 
-    return {
+    local p = {}
 
-        --
+    --
 
-        x1 = function()
-            return x - r
-        end,
-        xc = function()
-            return x
-        end,
-        x2 = function()
-            return x + r
-        end,
-        y1 = function()
-            return y - r
-        end,
-        yc = function()
-            return y
-        end,
-        y2 = function()
-            return y + r
-        end,
-        r = function()
-            return r
-        end,
-        direction = function()
-            return direction
-        end,
+    function p.x1()
+        return x - r
+    end
+    function p.xc()
+        return x
+    end
+    function p.x2()
+        return x + r
+    end
+    function p.y1()
+        return y - r
+    end
+    function p.yc()
+        return y
+    end
+    function p.y2()
+        return y + r
+    end
+    function p.r()
+        return r
+    end
+    function p.direction()
+        return direction
+    end
 
-        --
+    --
 
-        collision_circle = function()
-            return { x = x, y = y, r = r }
-        end,
+    function p.collision_circle()
+        return { x = x, y = y, r = r }
+    end
 
-        --
+    --
 
-        direct_left = function()
-            dx, dy = -speed, 0
-            direction = "l"
-        end,
-        direct_right = function()
-            dx, dy = speed, 0
-            direction = "r"
-        end,
-        direct_up = function()
-            dx, dy = 0, -speed
-            direction = "u"
-        end,
-        direct_down = function()
-            dx, dy = 0, speed
-            direction = "d"
-        end,
+    function p.direct_left()
+        dx, dy = -speed, 0
+        direction = "l"
+    end
+    function p.direct_right()
+        dx, dy = speed, 0
+        direction = "r"
+    end
+    function p.direct_up()
+        dx, dy = 0, -speed
+        direction = "u"
+    end
+    function p.direct_down()
+        dx, dy = 0, speed
+        direction = "d"
+    end
 
-        --
+    --
 
-        move = function()
-            x = x + dx
-            y = y + dy
-            x = mid(r, x, a.game_area_w - r - 1)
-            y = mid(r, y, a.game_area_h - r - 1)
-        end,
+    function p.move()
+        x = x + dx
+        y = y + dy
+        x = mid(r, x, a.game_area_w - r - 1)
+        y = mid(r, y, a.game_area_h - r - 1)
+    end
 
-        --
+    --
 
-        draw = function()
-            palt(u.colors.black, false)
-            palt(u.colors.dark_blue, true)
-            spr(
-                sprite_for_direction[direction],
-                x - r,
-                y - r
-            )
-            palt()
-            if __debug__ then
-                circfill(x, y, r, u.colors.red)
-            end
-        end,
+    function p.draw()
+        palt(u.colors.black, false)
+        palt(u.colors.dark_blue, true)
+        spr(
+            sprite_for_direction[direction],
+            x - r,
+            y - r
+        )
+        palt()
+        if __debug__ then
+            circfill(x, y, r, u.colors.red)
+        end
+    end
 
-        --
+    --
 
-    }
+    return p
 end

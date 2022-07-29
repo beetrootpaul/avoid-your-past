@@ -26,178 +26,178 @@ function new_level(params)
         return close_tiles
     end
 
-    return {
+    local l = {}
 
-        --
+    --
 
-        spawn_items = function()
-            local tiles_close_to_player = get_tiles_close_to_player()
-            local available_tiles = {}
-            local margin_tiles = 1
-            for tile_x = 1 + margin_tiles, a.game_area_w_tiles - margin_tiles do
-                for tile_y = 1 + margin_tiles, a.game_area_h_tiles - margin_tiles do
-                    if not tiles_close_to_player[tile_x .. "_" .. tile_y] then
-                        add(available_tiles, { tile_x = tile_x, tile_y = tile_y })
-                    end
+    function l.spawn_items()
+        local tiles_close_to_player = get_tiles_close_to_player()
+        local available_tiles = {}
+        local margin_tiles = 1
+        for tile_x = 1 + margin_tiles, a.game_area_w_tiles - margin_tiles do
+            for tile_y = 1 + margin_tiles, a.game_area_h_tiles - margin_tiles do
+                if not tiles_close_to_player[tile_x .. "_" .. tile_y] then
+                    add(available_tiles, { tile_x = tile_x, tile_y = tile_y })
                 end
             end
+        end
 
-            local coin_tile = rnd(available_tiles)
-            if coin_tile then
-                coin = new_item {
-                    tile_x = coin_tile.tile_x,
-                    tile_y = coin_tile.tile_y,
-                    collision_circle_r = 2.5,
-                    animated_sprite = new_animated_sprite {
-                        first_sprite = 16,
-                        number_of_sprites = 16,
-                        frames_per_sprite = 2,
-                    }
+        local coin_tile = rnd(available_tiles)
+        if coin_tile then
+            coin = new_item {
+                tile_x = coin_tile.tile_x,
+                tile_y = coin_tile.tile_y,
+                collision_circle_r = 2.5,
+                animated_sprite = new_animated_sprite {
+                    first_sprite = 16,
+                    number_of_sprites = 16,
+                    frames_per_sprite = 2,
                 }
-            end
+            }
+        end
 
-            if not droplet_no_coins and not droplet_no_memories and not mode.is_no_coins() and not mode.is_no_memories() then
-                del(available_tiles, coin_tile)
-                local droplet_tile = rnd(available_tiles)
-                if droplet_tile then
-                    local probability = rnd(1)
-                    if __debug__ then
-                        printh(probability)
-                    end
-                    if probability < 0.3 then
-                        droplet_no_coins = new_item {
-                            tile_x = droplet_tile.tile_x,
-                            tile_y = droplet_tile.tile_y,
-                            collision_circle_r = 3.5,
-                            animated_sprite = new_animated_sprite {
-                                first_sprite = 32,
-                                number_of_sprites = 1,
-                                frames_per_sprite = 1,
-                            }
+        if not droplet_no_coins and not droplet_no_memories and not mode.is_no_coins() and not mode.is_no_memories() then
+            del(available_tiles, coin_tile)
+            local droplet_tile = rnd(available_tiles)
+            if droplet_tile then
+                local probability = rnd(1)
+                if __debug__ then
+                    printh(probability)
+                end
+                if probability < 0.3 then
+                    droplet_no_coins = new_item {
+                        tile_x = droplet_tile.tile_x,
+                        tile_y = droplet_tile.tile_y,
+                        collision_circle_r = 3.5,
+                        animated_sprite = new_animated_sprite {
+                            first_sprite = 32,
+                            number_of_sprites = 1,
+                            frames_per_sprite = 1,
                         }
-                    elseif probability > 0.7 then
-                        droplet_no_memories = new_item {
-                            tile_x = droplet_tile.tile_x,
-                            tile_y = droplet_tile.tile_y,
-                            collision_circle_r = 3.5,
-                            animated_sprite = new_animated_sprite {
-                                first_sprite = 48,
-                                number_of_sprites = 1,
-                                frames_per_sprite = 1,
-                            }
+                    }
+                elseif probability > 0.7 then
+                    droplet_no_memories = new_item {
+                        tile_x = droplet_tile.tile_x,
+                        tile_y = droplet_tile.tile_y,
+                        collision_circle_r = 3.5,
+                        animated_sprite = new_animated_sprite {
+                            first_sprite = 48,
+                            number_of_sprites = 1,
+                            frames_per_sprite = 1,
                         }
-                    end
+                    }
                 end
             end
-        end,
+        end
+    end
 
-        --
+    --
 
-        remove_coin = function()
-            coin = nil
-        end,
+    function l.remove_coin()
+        coin = nil
+    end
 
-        --
+    --
 
-        remove_droplet_no_coins = function()
-            droplet_no_coins = nil
-        end,
-        remove_droplet_no_memories = function()
-            droplet_no_memories = nil
-        end,
+    function l.remove_droplet_no_coins()
+        droplet_no_coins = nil
+    end
+    function l.remove_droplet_no_memories()
+        droplet_no_memories = nil
+    end
 
-        --
+    --
 
-        check_collisions = function(callbacks)
-            if coin then
-                if collisions.have_circles_collided(
-                    player.collision_circle(),
-                    coin.collision_circle()
-                ) then
-                    callbacks.on_coin()
-                end
+    function l.check_collisions(callbacks)
+        if coin then
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                coin.collision_circle()
+            ) then
+                callbacks.on_coin()
             end
-            if droplet_no_coins then
-                if collisions.have_circles_collided(
-                    player.collision_circle(),
-                    droplet_no_coins.collision_circle()
-                ) then
-                    callbacks.on_droplet_no_coins()
-                end
+        end
+        if droplet_no_coins then
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                droplet_no_coins.collision_circle()
+            ) then
+                callbacks.on_droplet_no_coins()
             end
-            if droplet_no_memories then
-                if collisions.have_circles_collided(
-                    player.collision_circle(),
-                    droplet_no_memories.collision_circle()
-                ) then
-                    callbacks.on_droplet_no_memories()
-                end
+        end
+        if droplet_no_memories then
+            if collisions.have_circles_collided(
+                player.collision_circle(),
+                droplet_no_memories.collision_circle()
+            ) then
+                callbacks.on_droplet_no_memories()
             end
-        end,
+        end
+    end
 
-        --
+    --
 
-        animate = function()
-            if coin then
-                coin.animate()
-            end
-            if droplet_no_coins then
-                droplet_no_coins.animate()
-            end
-            if droplet_no_memories then
-                droplet_no_memories.animate()
-            end
-        end,
+    function l.animate()
+        if coin then
+            coin.animate()
+        end
+        if droplet_no_coins then
+            droplet_no_coins.animate()
+        end
+        if droplet_no_memories then
+            droplet_no_memories.animate()
+        end
+    end
 
-        --
+    --
 
-        draw_bg = function()
-            fillp(mode.bg_pattern())
-            rectfill(
-                0,
-                0,
-                a.game_area_w - 1,
-                a.game_area_h - 1,
-                mode.bg_color()
-            )
-            fillp()
+    function l.draw_bg()
+        fillp(mode.bg_pattern())
+        rectfill(
+            0,
+            0,
+            a.game_area_w - 1,
+            a.game_area_h - 1,
+            mode.bg_color()
+        )
+        fillp()
 
-            if __debug__ then
-                local tiles_close_to_player = get_tiles_close_to_player()
-                for tile_x = 1, a.game_area_w_tiles do
-                    for tile_y = 1, a.game_area_h_tiles do
-                        line(
+        if __debug__ then
+            local tiles_close_to_player = get_tiles_close_to_player()
+            for tile_x = 1, a.game_area_w_tiles do
+                for tile_y = 1, a.game_area_h_tiles do
+                    line(
+                        (tile_x - 1) * u.tile_px, (tile_y - 1) * u.tile_px,
+                        (tile_x - 1) * u.tile_px, (tile_y - 1) * u.tile_px,
+                        u.colors.violet_grey
+                    )
+                    if tiles_close_to_player[tile_x .. "_" .. tile_y] then
+                        rectfill(
                             (tile_x - 1) * u.tile_px, (tile_y - 1) * u.tile_px,
-                            (tile_x - 1) * u.tile_px, (tile_y - 1) * u.tile_px,
-                            u.colors.violet_grey
+                            tile_x * u.tile_px - 1, tile_y * u.tile_px - 1,
+                            u.colors.purple
                         )
-                        if tiles_close_to_player[tile_x .. "_" .. tile_y] then
-                            rectfill(
-                                (tile_x - 1) * u.tile_px, (tile_y - 1) * u.tile_px,
-                                tile_x * u.tile_px - 1, tile_y * u.tile_px - 1,
-                                u.colors.purple
-                            )
-                        end
                     end
                 end
             end
-        end,
+        end
+    end
 
-        --
+    --
 
-        draw_items = function()
-            if not mode.is_no_coins() then
-                coin.draw()
-            end
-            if droplet_no_coins then
-                droplet_no_coins.draw()
-            end
-            if droplet_no_memories then
-                droplet_no_memories.draw()
-            end
-        end,
+    function l.draw_items()
+        if not mode.is_no_coins() then
+            coin.draw()
+        end
+        if droplet_no_coins then
+            droplet_no_coins.draw()
+        end
+        if droplet_no_memories then
+            droplet_no_memories.draw()
+        end
+    end
 
-        --
+    --
 
-    }
+    return l
 end

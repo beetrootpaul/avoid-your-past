@@ -30,38 +30,38 @@ function new_game_state_splash()
     audio.play_music()
     audio.enable_music_layers { false, false, false }
 
-    return {
+    local gs = {}
 
-        --
+    --
 
-        update = function(self)
-            if sash.has_collapsed() then
-                return new_game_state_start()
-            end
+    function gs.update()
+        if sash.has_collapsed() then
+            return new_game_state_start()
+        end
 
-            if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
-                sash.collapse()
-            end
+        if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
+            sash.collapse()
+        end
 
-            sash.advance_1_frame()
+        sash.advance_1_frame()
 
-            return self
-        end,
+        return gs
+    end
 
-        --
+    --
 
-        draw = function()
-            rectfill(
-                a.camera_x,
-                a.camera_y,
-                a.camera_x + u.screen_px - 1,
-                a.camera_y + u.screen_px - 1,
-                a.bg_color_mode_normal
-            )
-            sash.draw()
-        end,
+    function gs.draw()
+        rectfill(
+            a.camera_x,
+            a.camera_y,
+            a.camera_x + u.screen_px - 1,
+            a.camera_y + u.screen_px - 1,
+            a.bg_color_mode_normal
+        )
+        sash.draw()
+    end
 
-        --
+    --
 
-    }
+    return gs
 end

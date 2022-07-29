@@ -11,7 +11,7 @@ function _init()
 end
 
 function _update()
-    gs = gs.update(gs)
+    gs = gs.update()
 end
 
 function _draw()
