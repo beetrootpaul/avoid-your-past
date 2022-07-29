@@ -19,3 +19,11 @@ Controls:
 ---
 
 This game is available to play on https://beetrootpaul.itch.io/avoid-your-past
+
+---
+
+![](./dist/screenshots/screenshot-arrows.png)
+
+![](./dist/screenshots/screenshot-invulnerable.png)
+
+![](./dist/screenshots/screenshot-normal.png)
