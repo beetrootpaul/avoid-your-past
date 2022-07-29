@@ -51,68 +51,68 @@ function new_game_state_gameplay(params)
 
     audio.enable_music_layers { true, false, false }
 
-    return {
+    local gs = {}
 
-        --
+    --
 
-        update = function(self)
-            if btnp(u.buttons.l) then
-                player.direct_left()
-            elseif btnp(u.buttons.r) then
-                player.direct_right()
-            elseif btnp(u.buttons.u) then
-                player.direct_up()
-            elseif btnp(u.buttons.d) then
-                player.direct_down()
+    function gs.update()
+        if btnp(u.buttons.l) then
+            player.direct_left()
+        elseif btnp(u.buttons.r) then
+            player.direct_right()
+        elseif btnp(u.buttons.u) then
+            player.direct_up()
+        elseif btnp(u.buttons.d) then
+            player.direct_down()
+        end
+
+        mode.update {
+            on_back_to_regular_mode = on_back_to_regular_mode
+        }
+
+        level.check_collisions {
+            on_coin = on_coin_collision,
+            on_droplet_no_coins = on_droplet_no_coins_collision,
+            on_droplet_no_memories = on_droplet_no_memories_collision,
+        }
+
+        level.animate()
+
+        player_trail.update()
+        player.move()
+
+        memories.move()
+
+        if not mode.is_no_memories() then
+            if memories.has_player_collided_with_memory() then
+                return new_game_state_over {
+                    score = score,
+                    level = level,
+                    player = player,
+                }
             end
+        end
 
-            mode.update {
-                on_back_to_regular_mode = on_back_to_regular_mode
-            }
+        return gs
+    end
 
-            level.check_collisions {
-                on_coin = on_coin_collision,
-                on_droplet_no_coins = on_droplet_no_coins_collision,
-                on_droplet_no_memories = on_droplet_no_memories_collision,
-            }
+    --
 
-            level.animate()
+    function gs.draw()
+        level.draw_bg()
+        level.draw_items()
 
-            player_trail.update()
-            player.move()
+        player_trail.draw()
+        player.draw()
 
-            memories.move()
+        if not mode.is_no_memories() then
+            memories.draw()
+        end
 
-            if not mode.is_no_memories() then
-                if memories.has_player_collided_with_memory() then
-                    return new_game_state_over {
-                        score = score,
-                        level = level,
-                        player = player,
-                    }
-                end
-            end
+        topbar.draw()
+    end
 
-            return self
-        end,
+    --
 
-        --
-
-        draw = function()
-            level.draw_bg()
-            level.draw_items()
-
-            player_trail.draw()
-            player.draw()
-
-            if not mode.is_no_memories() then
-                memories.draw()
-            end
-
-            topbar.draw()
-        end,
-
-        --
-
-    }
+    return gs
 end

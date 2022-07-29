@@ -33,37 +33,37 @@ function new_game_state_over(params)
 
     audio.enable_music_layers { false, false, false }
 
-    return {
+    local gs = {}
 
-        --
+    --
 
-        update = function(self)
-            if sash.has_collapsed() then
-                return new_game_state_start()
+    function gs.update()
+        if sash.has_collapsed() then
+            return new_game_state_start()
+        end
+
+        if sash.has_expanded() then
+            if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
+                sash.collapse()
             end
+        end
 
-            if sash.has_expanded() then
-                if btnp(u.buttons.l) or btnp(u.buttons.r) or btnp(u.buttons.u) or btnp(u.buttons.d) then
-                    sash.collapse()
-                end
-            end
+        sash.advance_1_frame()
 
-            sash.advance_1_frame()
+        return gs
+    end
 
-            return self
-        end,
+    --
 
-        --
+    function gs.draw()
+        level.draw_bg()
+        level.draw_items()
+        player.draw()
 
-        draw = function()
-            level.draw_bg()
-            level.draw_items()
-            player.draw()
+        sash.draw()
+    end
 
-            sash.draw()
-        end,
+    --
 
-        --
-
-    }
+    return gs
 end

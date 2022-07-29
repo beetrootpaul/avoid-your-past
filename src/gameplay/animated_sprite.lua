@@ -10,22 +10,22 @@ function new_animated_sprite(params)
     local frame_counter = 0
     local loop_length_frames = frames_per_sprite * number_of_sprites
 
-    return {
+    local as = {}
 
-        --
+    --
 
-        advance_1_frame = function()
-            frame_counter = (frame_counter + 1) % loop_length_frames
-        end,
+    function as.advance_1_frame()
+        frame_counter = (frame_counter + 1) % loop_length_frames
+    end
 
-        --
+    --
 
-        current_sprite = function()
-            local sprite_index = flr(frame_counter / frames_per_sprite)
-            return first_sprite + sprite_index
-        end,
+    function as.current_sprite()
+        local sprite_index = flr(frame_counter / frames_per_sprite)
+        return first_sprite + sprite_index
+    end
 
-        --
+    --
 
-    }
+    return as
 end

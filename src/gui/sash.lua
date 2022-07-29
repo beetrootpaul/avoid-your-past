@@ -16,60 +16,60 @@ function new_sash(params)
     local center_y = a.camera_y + u.screen_px / 2
     local h_max = 30
 
-    return {
+    local s = {}
 
-        --
+    --
 
-        has_collapsed = function()
-            return ttl <= 0
-        end,
+    function s.has_collapsed()
+        return ttl <= 0
+    end
 
-        --
+    --
 
-        has_expanded = function()
-            return ttl <= ttl_expansion_end
-        end,
+    function s.has_expanded()
+        return ttl <= ttl_expansion_end
+    end
 
-        --
+    --
 
-        collapse = function()
-            ttl = ttl_collapse_start
-        end,
+    function s.collapse()
+        ttl = ttl_collapse_start
+    end
 
-        --
+    --
 
-        advance_1_frame = function()
-            ttl = ttl - 1
-        end,
+    function s.advance_1_frame()
+        ttl = ttl - 1
+    end
 
-        --
+    --
 
-        draw = function()
-            local h
-            if ttl > ttl_expansion_start then
-                h = 0
-            elseif ttl > ttl_expansion_end then
-                h = h_max * (ttl_expansion_start - ttl) / (ttl_expansion_start - ttl_expansion_end)
-            elseif ttl > ttl_collapse_start then
-                h = h_max
-            else
-                h = h_max * ttl / ttl_collapse_start
-            end
+    function s.draw()
+        local h
+        if ttl > ttl_expansion_start then
+            h = 0
+        elseif ttl > ttl_expansion_end then
+            h = h_max * (ttl_expansion_start - ttl) / (ttl_expansion_start - ttl_expansion_end)
+        elseif ttl > ttl_collapse_start then
+            h = h_max
+        else
+            h = h_max * ttl / ttl_collapse_start
+        end
 
-            if h > 0 then
-                rectfill(
-                    0, center_y - h / 2,
-                    u.screen_px - 1, center_y + h / 2 - 1,
-                    u.colors.dark_green
-                )
-            end
+        if h > 0 then
+            rectfill(
+                0, center_y - h / 2,
+                u.screen_px - 1, center_y + h / 2 - 1,
+                u.colors.dark_green
+            )
+        end
 
-            if h >= h_max then
-                draw_text(center_x, center_y)
-            end
-        end,
+        if h >= h_max then
+            draw_text(center_x, center_y)
+        end
+    end
 
-        --
+    --
 
-    }
+    return s
 end

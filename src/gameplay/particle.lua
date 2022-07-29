@@ -11,28 +11,28 @@ function new_particle(params)
     local ttl_max = 28
     local ttl = ttl_max
 
-    return {
+    local p = {}
 
-        --
+    --
 
-        age = function()
-            ttl = max(0, ttl - 1)
-        end,
+    function p.age()
+        ttl = max(0, ttl - 1)
+    end
 
-        --
+    --
 
-        should_disappear = function()
-            return ttl <= 0
-        end,
+    function p.should_disappear()
+        return ttl <= 0
+    end
 
-        --
+    --
 
-        draw = function()
-            local r = flr((ttl / ttl_max) * (r_max + 0.9))
-            circfill(x, y, r, color)
-        end,
+    function p.draw()
+        local r = flr((ttl / ttl_max) * (r_max + 0.9))
+        circfill(x, y, r, color)
+    end
 
-        --
+    --
 
-    }
+    return p
 end

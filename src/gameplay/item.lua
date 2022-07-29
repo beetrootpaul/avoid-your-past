@@ -8,38 +8,38 @@ function new_item(params)
     local collision_circle_r = params.collision_circle_r
     local animated_sprite = params.animated_sprite
 
-    return {
+    local it = {}
 
-        --
+    --
 
-        collision_circle = function()
-            return {
-                x = (tile_x - 1) * u.tile_px + u.tile_px / 2 - 0.5,
-                y = (tile_y - 1) * u.tile_px + u.tile_px / 2 - 0.5,
-                r = collision_circle_r,
-            }
-        end,
+    function it.collision_circle()
+        return {
+            x = (tile_x - 1) * u.tile_px + u.tile_px / 2 - 0.5,
+            y = (tile_y - 1) * u.tile_px + u.tile_px / 2 - 0.5,
+            r = collision_circle_r,
+        }
+    end
 
-        --
+    --
 
-        animate = function()
-            animated_sprite.advance_1_frame()
-        end,
+    function it.animate()
+        animated_sprite.advance_1_frame()
+    end
 
-        --
+    --
 
-        draw = function()
-            palt(u.colors.black, false)
-            palt(u.colors.dark_blue, true)
-            spr(
-                animated_sprite.current_sprite(),
-                (tile_x - 1) * u.tile_px,
-                (tile_y - 1) * u.tile_px
-            )
-            palt()
-        end,
+    function it.draw()
+        palt(u.colors.black, false)
+        palt(u.colors.dark_blue, true)
+        spr(
+            animated_sprite.current_sprite(),
+            (tile_x - 1) * u.tile_px,
+            (tile_y - 1) * u.tile_px
+        )
+        palt()
+    end
 
-        --
+    --
 
-    }
+    return it
 end
