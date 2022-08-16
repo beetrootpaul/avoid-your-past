@@ -18,7 +18,9 @@ Controls:
 
 ---
 
-This game is available to play on https://beetrootpaul.itch.io/avoid-your-past
+This game is available to play on https://beetrootpaul.itch.io/avoid-your-past .
+
+The game was made with [PICO-8](https://www.lexaloffle.com/pico-8.php).
 
 ---
 
